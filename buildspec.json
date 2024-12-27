@@ -2,7 +2,7 @@
     "dependencies": {
         "prebuilt": {
             "version": "2024-09-12",
-            "baseUrl": "https://github.com/obsproject/obs-deps/releases/download",
+            "baseUrl": "https://gh.api.99988866.xyz/https://github.com/obsproject/obs-deps/releases/download",
             "label": "Pre-Built obs-deps",
             "hashes": {
                 "macos-universal": "c857b211ee378772994b632036e1e5befe66b37e85286cb8e3cefc1435d5220a",
@@ -12,7 +12,7 @@
         },
         "qt6": {
             "version": "2024-09-12",
-            "baseUrl": "https://github.com/obsproject/obs-deps/releases/download",
+            "baseUrl": "https://gh.api.99988866.xyz/https://github.com/obsproject/obs-deps/releases/download",
             "label": "Pre-Built Qt6",
             "hashes": {
                 "macos-universal": "34a2de6b7f4d4d58fc5a15a4dba49a61d81a4045d0cedfc1a1f08c0dfb8047cf",

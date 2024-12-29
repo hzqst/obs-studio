@@ -90,7 +90,7 @@ void gs_enum_adapters(bool (*callback)(void *param, const char *name, uint32_t i
 extern void gs_init_image_deps(void);
 extern void gs_free_image_deps(void);
 
-bool load_graphics_imports(struct gs_exports *exports, void *module, const char *module_name);
+bool load_graphics_imports(struct gs_exports *exports, const char *subsystem_name);
 
 static bool graphics_init_immediate_vb(struct graphics_subsystem *graphics)
 {
@@ -171,7 +171,7 @@ static bool graphics_init(struct graphics_subsystem *graphics)
 	return true;
 }
 
-int gs_create(graphics_t **pgraphics, const char *module, uint32_t adapter)
+int gs_create(graphics_t **pgraphics, const char *subsystem_name, uint32_t adapter)
 {
 	int errcode = GS_ERROR_FAIL;
 
@@ -179,13 +179,7 @@ int gs_create(graphics_t **pgraphics, const char *module, uint32_t adapter)
 	pthread_mutex_init_value(&graphics->mutex);
 	pthread_mutex_init_value(&graphics->effect_mutex);
 
-	graphics->module = os_dlopen(module);
-	if (!graphics->module) {
-		errcode = GS_ERROR_MODULE_NOT_FOUND;
-		goto error;
-	}
-
-	if (!load_graphics_imports(&graphics->exports, graphics->module, module))
+	if (!load_graphics_imports(&graphics->exports, subsystem_name))
 		goto error;
 
 	errcode = graphics->exports.device_create(&graphics->device, adapter);
@@ -239,8 +233,7 @@ void gs_destroy(graphics_t *graphics)
 	da_free(graphics->matrix_stack);
 	da_free(graphics->viewport_stack);
 	da_free(graphics->blend_state_stack);
-	if (graphics->module)
-		os_dlclose(graphics->module);
+	
 	bfree(graphics);
 
 	gs_free_image_deps();

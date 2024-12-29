@@ -172,8 +172,8 @@ struct gs_exports {
 	void (*gs_timer_end)(gs_timer_t *timer);
 	bool (*gs_timer_get_data)(gs_timer_t *timer, uint64_t *ticks);
 	void (*gs_timer_range_destroy)(gs_timer_range_t *range);
-	bool (*gs_timer_range_begin)(gs_timer_range_t *range);
-	bool (*gs_timer_range_end)(gs_timer_range_t *range);
+	void (*gs_timer_range_begin)(gs_timer_range_t *range);
+	void (*gs_timer_range_end)(gs_timer_range_t *range);
 	bool (*gs_timer_range_get_data)(gs_timer_range_t *range, bool *disjoint, uint64_t *frequency);
 
 	void (*gs_shader_destroy)(gs_shader_t *shader);
@@ -277,7 +277,7 @@ struct blend_state {
 };
 
 struct graphics_subsystem {
-	void *module;
+
 	gs_device_t *device;
 	struct gs_exports exports;
 

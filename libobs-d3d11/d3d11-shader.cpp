@@ -366,24 +366,24 @@ void gs_shader::UploadParams()
 	}
 }
 
-void gs_shader_destroy(gs_shader_t *shader)
+void gs_shader_destroy_d3d11(gs_shader_t *shader)
 {
 	if (shader && shader->device->lastVertexShader == shader)
 		shader->device->lastVertexShader = nullptr;
 	delete shader;
 }
 
-int gs_shader_get_num_params(const gs_shader_t *shader)
+int gs_shader_get_num_params_d3d11(const gs_shader_t *shader)
 {
 	return (int)shader->params.size();
 }
 
-gs_sparam_t *gs_shader_get_param_by_idx(gs_shader_t *shader, uint32_t param)
+gs_sparam_t *gs_shader_get_param_by_idx_d3d11(gs_shader_t *shader, uint32_t param)
 {
 	return &shader->params[param];
 }
 
-gs_sparam_t *gs_shader_get_param_by_name(gs_shader_t *shader, const char *name)
+gs_sparam_t *gs_shader_get_param_by_name_d3d11(gs_shader_t *shader, const char *name)
 {
 	for (size_t i = 0; i < shader->params.size(); i++) {
 		gs_shader_param &param = shader->params[i];
@@ -394,7 +394,7 @@ gs_sparam_t *gs_shader_get_param_by_name(gs_shader_t *shader, const char *name)
 	return NULL;
 }
 
-gs_sparam_t *gs_shader_get_viewproj_matrix(const gs_shader_t *shader)
+gs_sparam_t *gs_shader_get_viewproj_matrix_d3d11(const gs_shader_t *shader)
 {
 	if (shader->type != GS_SHADER_VERTEX)
 		return NULL;
@@ -402,7 +402,7 @@ gs_sparam_t *gs_shader_get_viewproj_matrix(const gs_shader_t *shader)
 	return static_cast<const gs_vertex_shader *>(shader)->viewProj;
 }
 
-gs_sparam_t *gs_shader_get_world_matrix(const gs_shader_t *shader)
+gs_sparam_t *gs_shader_get_world_matrix_d3d11(const gs_shader_t *shader)
 {
 	if (shader->type != GS_SHADER_VERTEX)
 		return NULL;
@@ -410,7 +410,7 @@ gs_sparam_t *gs_shader_get_world_matrix(const gs_shader_t *shader)
 	return static_cast<const gs_vertex_shader *>(shader)->world;
 }
 
-void gs_shader_get_param_info(const gs_sparam_t *param, struct gs_shader_param_info *info)
+void gs_shader_get_param_info_d3d11(const gs_sparam_t *param, struct gs_shader_param_info *info)
 {
 	if (!param)
 		return;
@@ -419,7 +419,7 @@ void gs_shader_get_param_info(const gs_sparam_t *param, struct gs_shader_param_i
 	info->type = param->type;
 }
 
-static inline void shader_setval_inline(gs_shader_param *param, const void *data, size_t size)
+static inline void shader_setval_inline_d3d11(gs_shader_param *param, const void *data, size_t size)
 {
 	assert(param);
 	if (!param)
@@ -435,66 +435,66 @@ static inline void shader_setval_inline(gs_shader_param *param, const void *data
 	}
 }
 
-void gs_shader_set_bool(gs_sparam_t *param, bool val)
+void gs_shader_set_bool_d3d11(gs_sparam_t *param, bool val)
 {
 	int b_val = (int)val;
-	shader_setval_inline(param, &b_val, sizeof(int));
+	shader_setval_inline_d3d11(param, &b_val, sizeof(int));
 }
 
-void gs_shader_set_float(gs_sparam_t *param, float val)
+void gs_shader_set_float_d3d11(gs_sparam_t *param, float val)
 {
-	shader_setval_inline(param, &val, sizeof(float));
+	shader_setval_inline_d3d11(param, &val, sizeof(float));
 }
 
-void gs_shader_set_int(gs_sparam_t *param, int val)
+void gs_shader_set_int_d3d11(gs_sparam_t *param, int val)
 {
-	shader_setval_inline(param, &val, sizeof(int));
+	shader_setval_inline_d3d11(param, &val, sizeof(int));
 }
 
-void gs_shader_set_matrix3(gs_sparam_t *param, const struct matrix3 *val)
+void gs_shader_set_matrix3_d3d11(gs_sparam_t *param, const struct matrix3 *val)
 {
 	struct matrix4 mat;
 	matrix4_from_matrix3(&mat, val);
-	shader_setval_inline(param, &mat, sizeof(matrix4));
+	shader_setval_inline_d3d11(param, &mat, sizeof(matrix4));
 }
 
-void gs_shader_set_matrix4(gs_sparam_t *param, const struct matrix4 *val)
+void gs_shader_set_matrix4_d3d11(gs_sparam_t *param, const struct matrix4 *val)
 {
-	shader_setval_inline(param, val, sizeof(matrix4));
+	shader_setval_inline_d3d11(param, val, sizeof(matrix4));
 }
 
-void gs_shader_set_vec2(gs_sparam_t *param, const struct vec2 *val)
+void gs_shader_set_vec2_d3d11(gs_sparam_t *param, const struct vec2 *val)
 {
-	shader_setval_inline(param, val, sizeof(vec2));
+	shader_setval_inline_d3d11(param, val, sizeof(vec2));
 }
 
-void gs_shader_set_vec3(gs_sparam_t *param, const struct vec3 *val)
+void gs_shader_set_vec3_d3d11(gs_sparam_t *param, const struct vec3 *val)
 {
-	shader_setval_inline(param, val, sizeof(float) * 3);
+	shader_setval_inline_d3d11(param, val, sizeof(float) * 3);
 }
 
-void gs_shader_set_vec4(gs_sparam_t *param, const struct vec4 *val)
+void gs_shader_set_vec4_d3d11(gs_sparam_t *param, const struct vec4 *val)
 {
-	shader_setval_inline(param, val, sizeof(vec4));
+	shader_setval_inline_d3d11(param, val, sizeof(vec4));
 }
 
-void gs_shader_set_texture(gs_sparam_t *param, gs_texture_t *val)
+void gs_shader_set_texture_d3d11(gs_sparam_t *param, gs_texture_t *val)
 {
-	shader_setval_inline(param, &val, sizeof(gs_texture_t *));
+	shader_setval_inline_d3d11(param, &val, sizeof(gs_texture_t *));
 }
 
-void gs_shader_set_val(gs_sparam_t *param, const void *val, size_t size)
+void gs_shader_set_val_d3d11(gs_sparam_t *param, const void *val, size_t size)
 {
-	shader_setval_inline(param, val, size);
+	shader_setval_inline_d3d11(param, val, size);
 }
 
-void gs_shader_set_default(gs_sparam_t *param)
+void gs_shader_set_default_d3d11(gs_sparam_t *param)
 {
 	if (param->defaultValue.size())
-		shader_setval_inline(param, param->defaultValue.data(), param->defaultValue.size());
+		shader_setval_inline_d3d11(param, param->defaultValue.data(), param->defaultValue.size());
 }
 
-void gs_shader_set_next_sampler(gs_sparam_t *param, gs_samplerstate_t *sampler)
+void gs_shader_set_next_sampler_d3d11(gs_sparam_t *param, gs_samplerstate_t *sampler)
 {
 	param->nextSampler = sampler;
 }

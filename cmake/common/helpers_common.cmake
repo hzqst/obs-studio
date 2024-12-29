@@ -401,6 +401,43 @@ function(target_export target)
   )
 endfunction()
 
+function(target_export_with_deps target deps)
+  if(NOT DEFINED exclude_variant)
+    set(exclude_variant EXCLUDE_FROM_ALL)
+  endif()
+
+  get_target_property(is_framework ${target} FRAMEWORK)
+  if(is_framework)
+    set(package_destination "Frameworks/${target}.framework/Resources/cmake")
+    set(include_destination "Frameworks/${target}.framework/Headers")
+  else()
+    if(OS_WINDOWS)
+      set(package_destination "${OBS_CMAKE_DESTINATION}")
+    else()
+      set(package_destination "${OBS_CMAKE_DESTINATION}/${target}")
+    endif()
+    set(include_destination "${OBS_INCLUDE_DESTINATION}")
+  endif()
+
+  # Create a list from the deps string
+  set(deps_list "${deps}")
+  separate_arguments(deps_list)
+
+  install(
+    TARGETS ${target} ${deps_list}
+    EXPORT ${target}Targets
+    RUNTIME DESTINATION "${OBS_EXECUTABLE_DESTINATION}" COMPONENT Development ${exclude_variant}
+    LIBRARY DESTINATION "${OBS_LIBRARY_DESTINATION}" COMPONENT Development ${exclude_variant}
+    ARCHIVE DESTINATION "${OBS_LIBRARY_DESTINATION}" COMPONENT Development ${exclude_variant}
+    FRAMEWORK DESTINATION Frameworks COMPONENT Development ${exclude_variant}
+    INCLUDES DESTINATION "${include_destination}"
+    PUBLIC_HEADER DESTINATION "${include_destination}" COMPONENT Development ${exclude_variant}
+  )
+
+  # Rest of the function remains the same...
+endfunction()
+
+
 # check_uuid: Helper function to check for valid UUID
 function(check_uuid uuid_string return_value)
   set(valid_uuid TRUE)

@@ -23,7 +23,7 @@ if(NOT TARGET OBS::caption)
   add_subdirectory("${CMAKE_SOURCE_DIR}/deps/libcaption" "${CMAKE_BINARY_DIR}/deps/libcaption")
 endif()
 
-add_library(libobs SHARED)
+add_library(libobs STATIC)
 add_library(OBS::libobs ALIAS libobs)
 
 target_sources(
@@ -414,4 +414,4 @@ set_target_properties_obs(
              SOVERSION "${OBS_VERSION_MAJOR}"
 )
 
-target_export(libobs)
+target_export_with_deps(libobs "caption;libobs-version;obs-obfuscate;obs-winhandle;obs-comutils")

@@ -89,7 +89,7 @@ gs_duplicator::~gs_duplicator()
 
 extern "C" {
 
-EXPORT bool device_get_duplicator_monitor_info(gs_device_t *device, int monitor_idx, struct gs_monitor_info *info)
+bool device_get_duplicator_monitor_info_d3d11(gs_device_t *device, int monitor_idx, struct gs_monitor_info *info)
 {
 	DXGI_OUTPUT_DESC desc;
 	HRESULT hr;
@@ -139,7 +139,7 @@ EXPORT bool device_get_duplicator_monitor_info(gs_device_t *device, int monitor_
 	return true;
 }
 
-EXPORT int device_duplicator_get_monitor_index(gs_device_t *device, void *monitor)
+int device_duplicator_get_monitor_index_d3d11(gs_device_t *device, void *monitor)
 {
 	const HMONITOR handle = (HMONITOR)monitor;
 
@@ -187,7 +187,7 @@ void reset_duplicators(void)
 	}
 }
 
-EXPORT gs_duplicator_t *device_duplicator_create(gs_device_t *device, int monitor_idx)
+gs_duplicator_t *device_duplicator_create_d3d11(gs_device_t *device, int monitor_idx)
 {
 	gs_duplicator *duplicator = nullptr;
 
@@ -214,7 +214,7 @@ EXPORT gs_duplicator_t *device_duplicator_create(gs_device_t *device, int monito
 	return duplicator;
 }
 
-EXPORT void gs_duplicator_destroy(gs_duplicator_t *duplicator)
+void gs_duplicator_destroy_d3d11(gs_duplicator_t *duplicator)
 {
 	if (--duplicator->refs == 0) {
 		instances.erase(duplicator->idx);
@@ -222,7 +222,7 @@ EXPORT void gs_duplicator_destroy(gs_duplicator_t *duplicator)
 	}
 }
 
-static inline void copy_texture(gs_duplicator_t *d, ID3D11Texture2D *tex)
+static inline void copy_texture_d3d11(gs_duplicator_t *d, ID3D11Texture2D *tex)
 {
 	D3D11_TEXTURE2D_DESC desc;
 	tex->GetDesc(&desc);
@@ -243,7 +243,7 @@ static inline void copy_texture(gs_duplicator_t *d, ID3D11Texture2D *tex)
 		d->device->context->CopyResource(d->texture->texture, tex);
 }
 
-EXPORT bool gs_duplicator_update_frame(gs_duplicator_t *d)
+bool gs_duplicator_update_frame_d3d11(gs_duplicator_t *d)
 {
 	DXGI_OUTDUPL_FRAME_INFO info;
 	ComPtr<ID3D11Texture2D> tex;
@@ -282,23 +282,23 @@ EXPORT bool gs_duplicator_update_frame(gs_duplicator_t *d)
 		return true;
 	}
 
-	copy_texture(d, tex);
+	copy_texture_d3d11(d, tex);
 	d->duplicator->ReleaseFrame();
 	d->updated = true;
 	return true;
 }
 
-EXPORT gs_texture_t *gs_duplicator_get_texture(gs_duplicator_t *duplicator)
+gs_texture_t *gs_duplicator_get_texture_d3d11(gs_duplicator_t *duplicator)
 {
 	return duplicator->texture;
 }
 
-EXPORT enum gs_color_space gs_duplicator_get_color_space(gs_duplicator_t *duplicator)
+enum gs_color_space gs_duplicator_get_color_space_d3d11(gs_duplicator_t *duplicator)
 {
 	return duplicator->color_space;
 }
 
-EXPORT float gs_duplicator_get_sdr_white_level(gs_duplicator_t *duplicator)
+float gs_duplicator_get_sdr_white_level_d3d11(gs_duplicator_t *duplicator)
 {
 	return duplicator->sdr_white_nits;
 }

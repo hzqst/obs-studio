@@ -8,7 +8,7 @@ endif()
 
 find_package(Libfdk REQUIRED)
 
-add_library(obs-libfdk MODULE)
+add_library(obs-libfdk STATIC)
 add_library(OBS::libfdk ALIAS obs-libfdk)
 
 target_sources(obs-libfdk PRIVATE obs-libfdk.c)

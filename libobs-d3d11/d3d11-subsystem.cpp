@@ -928,7 +928,9 @@ static inline void EnumD3DAdapters(bool (*callback)(void *, const char *, uint32
 
 	hr = CreateDXGIFactory1(IID_PPV_ARGS(&factory));
 	if (FAILED(hr)) {
-		throw HRError("Failed to create DXGIFactory", hr);
+		//throw HRError("Failed to create DXGIFactory", hr);
+		blog(LOG_ERROR, "Failed to create DXGIFactory: %08X", hr);
+		return;
 	}
 
 	for (i = 0; factory->EnumAdapters1(i, adapter.Assign()) == S_OK; ++i) {
@@ -1340,7 +1342,8 @@ static inline void LogD3DAdapters()
 
 	hr = CreateDXGIFactory1(IID_PPV_ARGS(&factory));
 	if (FAILED(hr)) {
-		throw HRError("Failed to create DXGIFactory", hr);
+		//throw HRError("Failed to create DXGIFactory", hr);
+		blog(LOG_ERROR, "Failed to create DXGIFactory: %08X", hr);
 	}
 
 	for (i = 0; factory->EnumAdapters1(i, adapter.Assign()) == S_OK; ++i) {

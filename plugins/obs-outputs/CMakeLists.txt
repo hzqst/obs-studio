@@ -13,7 +13,7 @@ if(NOT TARGET OBS::opts-parser)
   add_subdirectory("${CMAKE_SOURCE_DIR}/shared/opts-parser" "${CMAKE_BINARY_DIR}/shared/opts-parser")
 endif()
 
-add_library(obs-outputs MODULE)
+add_library(obs-outputs STATIC)
 add_library(OBS::outputs ALIAS obs-outputs)
 
 target_sources(

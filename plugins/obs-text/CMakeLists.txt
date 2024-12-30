@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.28...3.30)
 
-add_library(obs-text MODULE)
+add_library(obs-text STATIC)
 add_library(OBS::text ALIAS obs-text)
 
 configure_file(cmake/windows/obs-module.rc.in obs-text.rc)

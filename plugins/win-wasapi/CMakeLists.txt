@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.28...3.30)
 
-add_library(win-wasapi MODULE)
+add_library(win-wasapi STATIC)
 add_library(OBS::wasapi ALIAS win-wasapi)
 
 target_sources(

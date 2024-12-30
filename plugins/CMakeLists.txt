@@ -42,49 +42,49 @@ add_obs_plugin(
     PLATFORMS WINDOWS MACOS LINUX
     WITH_MESSAGE
 )
-add_obs_plugin(image-source)
-add_obs_plugin(linux-alsa PLATFORMS LINUX FREEBSD OPENBSD)
-add_obs_plugin(linux-capture PLATFORMS LINUX FREEBSD OPENBSD)
-add_obs_plugin(linux-jack PLATFORMS LINUX FREEBSD OPENBSD)
-add_obs_plugin(linux-pipewire PLATFORMS LINUX FREEBSD OPENBSD)
-add_obs_plugin(linux-pulseaudio PLATFORMS LINUX FREEBSD OPENBSD)
-add_obs_plugin(linux-v4l2 PLATFORMS LINUX FREEBSD OPENBSD)
-add_obs_plugin(mac-avcapture PLATFORMS MACOS)
-add_obs_plugin(mac-capture PLATFORMS MACOS)
-add_obs_plugin(mac-syphon PLATFORMS MACOS)
-add_obs_plugin(mac-videotoolbox PLATFORMS MACOS)
-add_obs_plugin(mac-virtualcam PLATFORMS MACOS)
-add_obs_plugin(nv-filters PLATFORMS WINDOWS)
+#add_obs_plugin(image-source)
+#add_obs_plugin(linux-alsa PLATFORMS LINUX FREEBSD OPENBSD)
+#add_obs_plugin(linux-capture PLATFORMS LINUX FREEBSD OPENBSD)
+#add_obs_plugin(linux-jack PLATFORMS LINUX FREEBSD OPENBSD)
+#add_obs_plugin(linux-pipewire PLATFORMS LINUX FREEBSD OPENBSD)
+#add_obs_plugin(linux-pulseaudio PLATFORMS LINUX FREEBSD OPENBSD)
+#add_obs_plugin(linux-v4l2 PLATFORMS LINUX FREEBSD OPENBSD)
+#add_obs_plugin(mac-avcapture PLATFORMS MACOS)
+#add_obs_plugin(mac-capture PLATFORMS MACOS)
+#add_obs_plugin(mac-syphon PLATFORMS MACOS)
+#add_obs_plugin(mac-videotoolbox PLATFORMS MACOS)
+#add_obs_plugin(mac-virtualcam PLATFORMS MACOS)
+#add_obs_plugin(nv-filters PLATFORMS WINDOWS)
 
-check_obs_browser()
+#check_obs_browser()
 
-add_obs_plugin(obs-ffmpeg)
-add_obs_plugin(obs-filters)
-add_obs_plugin(obs-libfdk)
-add_obs_plugin(obs-nvenc PLATFORMS WINDOWS LINUX)
+#add_obs_plugin(obs-ffmpeg)
+#add_obs_plugin(obs-filters)
+#add_obs_plugin(obs-libfdk)
+#add_obs_plugin(obs-nvenc PLATFORMS WINDOWS LINUX)
 add_obs_plugin(obs-outputs)
-add_obs_plugin(
-    obs-qsv11
-    PLATFORMS WINDOWS LINUX
-    ARCHITECTURES x64 x86_64
-)
-add_obs_plugin(obs-text PLATFORMS WINDOWS)
-add_obs_plugin(obs-transitions)
-add_obs_plugin(
-    obs-vst
-    PLATFORMS WINDOWS MACOS LINUX
-    WITH_MESSAGE
-)
-add_obs_plugin(obs-webrtc)
+#add_obs_plugin(
+#    obs-qsv11
+#    PLATFORMS WINDOWS LINUX
+#    ARCHITECTURES x64 x86_64
+#)
+#add_obs_plugin(obs-text PLATFORMS WINDOWS)
+#add_obs_plugin(obs-transitions)
+#add_obs_plugin(
+#    obs-vst
+#    PLATFORMS WINDOWS MACOS LINUX
+#    WITH_MESSAGE
+#)
+#add_obs_plugin(obs-webrtc)
 
-check_obs_websocket()
+#check_obs_websocket()
 
-add_obs_plugin(obs-x264)
-add_obs_plugin(oss-audio PLATFORMS FREEBSD OPENBSD)
-add_obs_plugin(rtmp-services)
+#add_obs_plugin(obs-x264)
+#add_obs_plugin(oss-audio PLATFORMS FREEBSD OPENBSD)
+#add_obs_plugin(rtmp-services)
 add_obs_plugin(sndio PLATFORMS LINUX FREEBSD OPENBSD)
 add_obs_plugin(text-freetype2)
-add_obs_plugin(vlc-video WITH_MESSAGE)
+#add_obs_plugin(vlc-video WITH_MESSAGE)
 add_obs_plugin(win-capture PLATFORMS WINDOWS)
 add_obs_plugin(win-dshow PLATFORMS WINDOWS)
 add_obs_plugin(win-wasapi PLATFORMS WINDOWS)

@@ -6,7 +6,7 @@ add_library(OBS::winrt-headers ALIAS libobs-winrt-headers)
 target_sources(libobs-winrt-headers INTERFACE winrt-capture.h)
 target_include_directories(libobs-winrt-headers INTERFACE "${CMAKE_CURRENT_SOURCE_DIR}")
 
-add_library(libobs-winrt MODULE)
+add_library(libobs-winrt STATIC)
 add_library(OBS::libobs-winrt ALIAS libobs-winrt)
 
 target_sources(libobs-winrt PRIVATE winrt-capture.cpp winrt-capture.h winrt-dispatch.cpp winrt-dispatch.h)

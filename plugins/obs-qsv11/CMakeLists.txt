@@ -7,7 +7,7 @@ if(NOT ENABLE_QSV11)
   return()
 endif()
 
-add_library(obs-qsv11 MODULE)
+add_library(obs-qsv11 STATIC)
 add_library(OBS::qsv11 ALIAS obs-qsv11)
 
 find_package(VPL 2.9 REQUIRED)

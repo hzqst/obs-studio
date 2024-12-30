@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.28...3.30)
 
 find_package(FFmpeg REQUIRED avcodec avutil)
 
-add_library(win-dshow MODULE)
+add_library(win-dshow STATIC)
 add_library(OBS::dshow ALIAS win-dshow)
 
 if(NOT TARGET OBS::tiny-nv12-scale)

@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.28...3.30)
 
-add_library(libobs-opengl SHARED)
+add_library(libobs-opengl STATIC)
 add_library(OBS::libobs-opengl ALIAS libobs-opengl)
 
 if(NOT TARGET OBS::glad)

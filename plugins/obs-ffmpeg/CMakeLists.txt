@@ -9,7 +9,7 @@ endif()
 
 include(cmake/dependencies.cmake)
 
-add_library(obs-ffmpeg MODULE)
+add_library(obs-ffmpeg STATIC)
 add_library(OBS::ffmpeg ALIAS obs-ffmpeg)
 
 add_subdirectory(ffmpeg-mux)

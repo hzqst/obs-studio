@@ -7,7 +7,7 @@ if(NOT ENABLE_VST)
   return()
 endif()
 
-add_library(obs-vst MODULE)
+add_library(obs-vst STATIC)
 add_library(OBS::vst ALIAS obs-vst)
 
 find_package(Qt6 REQUIRED Widgets)

@@ -23,7 +23,7 @@ endif()
 
 find_package(jansson REQUIRED)
 
-add_library(win-capture MODULE)
+add_library(win-capture STATIC)
 add_library(OBS::capture ALIAS win-capture)
 
 target_sources(

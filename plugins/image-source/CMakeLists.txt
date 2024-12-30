@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.28...3.30)
 
-add_library(image-source MODULE)
+add_library(image-source STATIC)
 add_library(OBS::image-source ALIAS image-source)
 
 target_sources(image-source PRIVATE color-source.c image-source.c obs-slideshow.c obs-slideshow-mk2.c)

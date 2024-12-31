@@ -38,13 +38,13 @@
     "tools": {
         "sparkle": {
             "version": "2.6.4",
-            "baseUrl": "https://github.com/sparkle-project/Sparkle/releases/download",
+            "baseUrl": "https://gh.api.99988866.xyz/https://github.com/sparkle-project/Sparkle/releases/download",
             "label": "Sparkle 2",
             "hash": "50612a06038abc931f16011d7903b8326a362c1074dabccb718404ce8e585f0b"
         },
         "ccache-win": {
             "version": "4.8.1",
-            "baseUrl": "https://github.com/ccache/ccache/releases/download/",
+            "baseUrl": "https://gh.api.99988866.xyz/https://github.com/ccache/ccache/releases/download/",
             "label": "Ccache for Windows x64",
             "hash": "ca59770e9f46b59d6bec6e7036a17a27d601a0a5a0a721fe8e03fea734ccf732"
         }

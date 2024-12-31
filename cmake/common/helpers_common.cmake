@@ -401,6 +401,38 @@ function(target_export target)
   )
 endfunction()
 
+macro(patch_interface_include_dirs target)
+
+  get_target_property(original_interface_incs ${target} INTERFACE_INCLUDE_DIRECTORIES )
+
+  message("Original INTERFACE_INCLUDE_DIRECTORIES: ${original_interface_incs}")
+
+  set(patched_interface_incs "$<BUILD_INTERFACE:${original_interface_incs}>")
+
+  set_target_properties(${target} PROPERTIES INTERFACE_INCLUDE_DIRECTORIES "${patched_interface_incs}")
+
+  get_target_property(original_interface_incs ${target} INTERFACE_INCLUDE_DIRECTORIES )
+
+  message("Patched INTERFACE_INCLUDE_DIRECTORIES: ${original_interface_incs}")
+
+endmacro()
+
+macro(patch_interface_srcs target)
+
+  get_target_property(original_interface_srcs ${target} INTERFACE_SOURCES )
+
+  message("Original INTERFACE_SOURCES: ${original_interface_srcs}")
+
+  set(patched_interface_srcs "$<BUILD_INTERFACE:${original_interface_srcs}>")
+
+  set_target_properties(${target} PROPERTIES INTERFACE_SOURCES "${patched_interface_srcs}")
+
+  get_target_property(original_interface_srcs ${target} INTERFACE_SOURCES )
+
+  message("Patched INTERFACE_SOURCES: ${original_interface_srcs}")
+
+endmacro()
+
 function(target_export_with_deps target deps)
   #message("exclude_variant=${exclude_variant}")
   #if(NOT DEFINED exclude_variant)
@@ -423,6 +455,7 @@ function(target_export_with_deps target deps)
   # Create a list from the deps string
   set(deps_list "${deps}")
   separate_arguments(deps_list)
+ 
 
   install(
     TARGETS ${target} ${deps_list}
@@ -525,7 +558,6 @@ function(target_export_with_deps target deps)
     ${exclude_variant}
   )
 endfunction()
-
 
 # check_uuid: Helper function to check for valid UUID
 function(check_uuid uuid_string return_value)

@@ -414,4 +414,14 @@ set_target_properties_obs(
              SOVERSION "${OBS_VERSION_MAJOR}"
 )
 
+patch_interface_include_dirs(caption)
+patch_interface_srcs(caption)
+patch_interface_srcs(libobs-version)
+patch_interface_include_dirs(obs-obfuscate)
+patch_interface_srcs(obs-obfuscate)
+patch_interface_include_dirs(obs-winhandle)
+patch_interface_srcs(obs-winhandle)
+patch_interface_include_dirs(obs-comutils)
+patch_interface_srcs(obs-comutils)
+
 target_export_with_deps(libobs "caption;libobs-version;obs-obfuscate;obs-winhandle;obs-comutils")

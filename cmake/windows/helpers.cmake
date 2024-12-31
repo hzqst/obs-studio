@@ -276,7 +276,7 @@ function(target_export target)
   _target_export(${target})
 
   get_target_property(target_type ${target} TYPE)
-  if(NOT target_type STREQUAL INTERFACE_LIBRARY)
+  if(NOT target_type STREQUAL INTERFACE_LIBRARY AND NOT target_type STREQUAL STATIC_LIBRARY) # static libs
     install(
       FILES "$<TARGET_PDB_FILE:${target}>"
       CONFIGURATIONS RelWithDebInfo Debug Release

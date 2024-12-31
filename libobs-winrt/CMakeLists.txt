@@ -29,3 +29,5 @@ target_precompile_headers(
 target_link_libraries(libobs-winrt PRIVATE OBS::libobs OBS::COMutils Dwmapi windowsapp)
 
 set_target_properties_obs(libobs-winrt PROPERTIES FOLDER core)
+
+target_compile_definitions(libobs-winrt PRIVATE _SILENCE_CLANG_COROUTINE_MESSAGE) #for llvm-msvc

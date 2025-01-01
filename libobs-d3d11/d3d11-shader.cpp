@@ -28,6 +28,15 @@
 #include <fstream>
 #include <d3dcompiler.h>
 
+extern "C"
+{
+
+void device_load_texture_d3d11(gs_device_t *device, gs_texture_t *tex, int unit);
+void device_load_texture_srgb_d3d11(gs_device_t *device, gs_texture_t *tex, int unit);
+
+}
+
+
 void gs_vertex_shader::GetBuffersExpected(const vector<D3D11_INPUT_ELEMENT_DESC> &inputs)
 {
 	for (size_t i = 0; i < inputs.size(); i++) {
@@ -328,9 +337,9 @@ inline void gs_shader::UpdateParam(vector<uint8_t> &constData, gs_shader_param &
 		struct gs_shader_texture shader_tex;
 		memcpy(&shader_tex, param.curValue.data(), sizeof(shader_tex));
 		if (shader_tex.srgb)
-			device_load_texture_srgb(device, shader_tex.tex, param.textureID);
+			device_load_texture_srgb_d3d11(device, shader_tex.tex, param.textureID);
 		else
-			device_load_texture(device, shader_tex.tex, param.textureID);
+			device_load_texture_d3d11(device, shader_tex.tex, param.textureID);
 
 		if (param.nextSampler) {
 			ID3D11SamplerState *state = param.nextSampler->state;
@@ -366,6 +375,7 @@ void gs_shader::UploadParams()
 	}
 }
 
+extern "C" {
 void gs_shader_destroy_d3d11(gs_shader_t *shader)
 {
 	if (shader && shader->device->lastVertexShader == shader)
@@ -497,4 +507,5 @@ void gs_shader_set_default_d3d11(gs_sparam_t *param)
 void gs_shader_set_next_sampler_d3d11(gs_sparam_t *param, gs_samplerstate_t *sampler)
 {
 	param->nextSampler = sampler;
+}
 }

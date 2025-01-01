@@ -1038,4 +1038,7 @@ struct gs_device {
 	~gs_device();
 };
 
-extern "C" EXPORT int device_texture_acquire_sync(gs_texture_t *tex, uint64_t key, uint32_t ms);
+extern "C" {
+int device_texture_acquire_sync_d3d11(gs_texture_t *tex, uint64_t key, uint32_t ms);
+
+}

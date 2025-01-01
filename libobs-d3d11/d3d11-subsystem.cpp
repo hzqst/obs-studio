@@ -29,6 +29,24 @@
 #include <shellscalingapi.h>
 #include <d3dkmthk.h>
 
+extern "C" {
+
+void device_load_vertexbuffer_d3d11(gs_device_t *device, gs_vertbuffer_t *vertbuffer);
+void device_load_vertexshader_d3d11(gs_device_t *device, gs_shader_t *vertshader);
+void device_set_viewport_d3d11(gs_device_t *device, int x, int y, int width, int height);
+void device_set_cull_mode_d3d11(gs_device_t *device, enum gs_cull_mode mode);
+void device_enable_depth_test_d3d11(gs_device_t *device, bool enable);
+void device_enable_blending_d3d11(gs_device_t *device, bool enable);
+void device_set_render_target_d3d11(gs_device_t *device, gs_texture_t *tex, gs_zstencil_t *zstencil);
+void device_load_pixelshader_d3d11(gs_device_t *device, gs_shader_t *pixelshader);
+void device_stage_texture_d3d11(gs_device_t *device, gs_stagesurf_t *dst, gs_texture_t *src);
+bool gs_stagesurface_map_d3d11(gs_stagesurf_t *stagesurf, uint8_t **data, uint32_t *linesize);
+void gs_stagesurface_unmap_d3d11(gs_stagesurf_t *stagesurf);
+void device_load_texture_d3d11(gs_device_t *device, gs_texture_t *tex, int unit);
+void device_load_texture_srgb_d3d11(gs_device_t *device, gs_texture_t *tex, int unit);
+
+}
+
 struct UnsupportedHWError : HRError {
 	inline UnsupportedHWError(const char *str, HRESULT hr) : HRError(str, hr) {}
 };
@@ -338,48 +356,48 @@ try {
 
 	gs_vertex_buffer buf(this, vbd, 0);
 
-	device_load_vertexbuffer(this, &buf);
-	device_load_vertexshader(this, &nv12_vs);
+	device_load_vertexbuffer_d3d11(this, &buf);
+	device_load_vertexshader_d3d11(this, &nv12_vs);
 
 	context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
 
-	device_set_viewport(this, 0, 0, NV12_CX, NV12_CY);
-	device_set_cull_mode(this, GS_NEITHER);
-	device_enable_depth_test(this, false);
-	device_enable_blending(this, false);
+	device_set_viewport_d3d11(this, 0, 0, NV12_CX, NV12_CY);
+	device_set_cull_mode_d3d11(this, GS_NEITHER);
+	device_enable_depth_test_d3d11(this, false);
+	device_enable_blending_d3d11(this, false);
 	LoadVertexBufferData();
 
-	device_set_render_target(this, &nv12_y, nullptr);
-	device_load_pixelshader(this, &nv12_y_ps);
+	device_set_render_target_d3d11(this, &nv12_y, nullptr);
+	device_load_pixelshader_d3d11(this, &nv12_y_ps);
 	UpdateBlendState();
 	UpdateRasterState();
 	UpdateZStencilState();
 	FlushOutputViews();
 	context->Draw(4, 0);
 
-	device_set_viewport(this, 0, 0, NV12_CX / 2, NV12_CY / 2);
-	device_set_render_target(this, &nv12_uv, nullptr);
-	device_load_pixelshader(this, &nv12_uv_ps);
+	device_set_viewport_d3d11(this, 0, 0, NV12_CX / 2, NV12_CY / 2);
+	device_set_render_target_d3d11(this, &nv12_uv, nullptr);
+	device_load_pixelshader_d3d11(this, &nv12_uv_ps);
 	UpdateBlendState();
 	UpdateRasterState();
 	UpdateZStencilState();
 	FlushOutputViews();
 	context->Draw(4, 0);
 
-	device_load_pixelshader(this, nullptr);
-	device_load_vertexbuffer(this, nullptr);
-	device_load_vertexshader(this, nullptr);
-	device_set_render_target(this, nullptr, nullptr);
+	device_load_pixelshader_d3d11(this, nullptr);
+	device_load_vertexbuffer_d3d11(this, nullptr);
+	device_load_vertexshader_d3d11(this, nullptr);
+	device_set_render_target_d3d11(this, nullptr, nullptr);
 
-	device_stage_texture(this, &nv12_stage, &nv12_y);
+	device_stage_texture_d3d11(this, &nv12_stage, &nv12_y);
 
 	uint8_t *data;
 	uint32_t linesize;
 	bool bad_driver = false;
 
-	if (gs_stagesurface_map(&nv12_stage, &data, &linesize)) {
+	if (gs_stagesurface_map_d3d11(&nv12_stage, &data, &linesize)) {
 		bad_driver = data[linesize * NV12_CY] == 0;
-		gs_stagesurface_unmap(&nv12_stage);
+		gs_stagesurface_unmap_d3d11(&nv12_stage);
 	} else {
 		throw "Could not map surface";
 	}
@@ -893,7 +911,7 @@ gs_device::gs_device(uint32_t adapterIdx) : curToplogy(D3D11_PRIMITIVE_TOPOLOGY_
 	InitFactory();
 	InitAdapter(adapterIdx);
 	InitDevice(adapterIdx);
-	device_set_render_target(this, NULL, NULL);
+	device_set_render_target_d3d11(this, NULL, NULL);
 }
 
 gs_device::~gs_device()
@@ -2608,7 +2626,7 @@ void device_projection_pop_d3d11(gs_device_t *device)
 void gs_swapchain_destroy_d3d11(gs_swapchain_t *swapchain)
 {
 	if (swapchain->device->curSwapChain == swapchain)
-		device_load_swapchain(swapchain->device, nullptr);
+		device_load_swapchain_d3d11(swapchain->device, nullptr);
 
 	delete swapchain;
 }

@@ -110,7 +110,7 @@ void gs_texture_2d::Rebuild(ID3D11Device *dev)
 		ComQIPtr<IDXGIResource> dxgi_res(texture);
 		if (dxgi_res)
 			GetSharedHandle(dxgi_res);
-		device_texture_acquire_sync(this, 0, INFINITE);
+		device_texture_acquire_sync_d3d11(this, 0, INFINITE);
 	}
 }
 
@@ -146,7 +146,7 @@ void gs_texture_2d::RebuildPaired_Y(ID3D11Device *dev)
 		ComQIPtr<IDXGIResource> dxgi_res(texture);
 		if (dxgi_res)
 			GetSharedHandle(dxgi_res);
-		device_texture_acquire_sync(this, 0, INFINITE);
+		device_texture_acquire_sync_d3d11(this, 0, INFINITE);
 	}
 }
 
@@ -349,7 +349,7 @@ void gs_texture_3d::Rebuild(ID3D11Device *dev)
 		ComQIPtr<IDXGIResource> dxgi_res(texture);
 		if (dxgi_res)
 			GetSharedHandle(dxgi_res);
-		device_texture_acquire_sync(this, 0, INFINITE);
+		device_texture_acquire_sync_d3d11(this, 0, INFINITE);
 	}
 }
 

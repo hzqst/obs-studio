@@ -14,22 +14,24 @@
 #include <winrt-capture.h>
 #endif
 
+OBS_DECLARE_MODULE(win_capture);
+
 /* clang-format off */
 
-#define TEXT_WINDOW_CAPTURE obs_module_text("WindowCapture")
-#define TEXT_WINDOW         obs_module_text("WindowCapture.Window")
-#define TEXT_METHOD         obs_module_text("WindowCapture.Method")
-#define TEXT_METHOD_AUTO    obs_module_text("WindowCapture.Method.Auto")
-#define TEXT_METHOD_BITBLT  obs_module_text("WindowCapture.Method.BitBlt")
-#define TEXT_METHOD_WGC     obs_module_text("WindowCapture.Method.WindowsGraphicsCapture")
-#define TEXT_MATCH_PRIORITY obs_module_text("WindowCapture.Priority")
-#define TEXT_MATCH_TITLE    obs_module_text("WindowCapture.Priority.Title")
-#define TEXT_MATCH_CLASS    obs_module_text("WindowCapture.Priority.Class")
-#define TEXT_MATCH_EXE      obs_module_text("WindowCapture.Priority.Exe")
-#define TEXT_CAPTURE_CURSOR obs_module_text("CaptureCursor")
-#define TEXT_COMPATIBILITY  obs_module_text("Compatibility")
-#define TEXT_CLIENT_AREA    obs_module_text("ClientArea")
-#define TEXT_FORCE_SDR      obs_module_text("ForceSdr")
+#define TEXT_WINDOW_CAPTURE obs_module_text(win_capture, "WindowCapture")
+#define TEXT_WINDOW         obs_module_text(win_capture, "WindowCapture.Window")
+#define TEXT_METHOD         obs_module_text(win_capture, "WindowCapture.Method")
+#define TEXT_METHOD_AUTO    obs_module_text(win_capture, "WindowCapture.Method.Auto")
+#define TEXT_METHOD_BITBLT  obs_module_text(win_capture, "WindowCapture.Method.BitBlt")
+#define TEXT_METHOD_WGC     obs_module_text(win_capture, "WindowCapture.Method.WindowsGraphicsCapture")
+#define TEXT_MATCH_PRIORITY obs_module_text(win_capture, "WindowCapture.Priority")
+#define TEXT_MATCH_TITLE    obs_module_text(win_capture, "WindowCapture.Priority.Title")
+#define TEXT_MATCH_CLASS    obs_module_text(win_capture, "WindowCapture.Priority.Class")
+#define TEXT_MATCH_EXE      obs_module_text(win_capture, "WindowCapture.Priority.Exe")
+#define TEXT_CAPTURE_CURSOR obs_module_text(win_capture, "CaptureCursor")
+#define TEXT_COMPATIBILITY  obs_module_text(win_capture, "Compatibility")
+#define TEXT_CLIENT_AREA    obs_module_text(win_capture, "ClientArea")
+#define TEXT_FORCE_SDR      obs_module_text(win_capture, "ForceSdr")
 
 /* clang-format on */
 
@@ -266,19 +268,16 @@ static const char *wc_getname(void *unused)
 	return TEXT_WINDOW_CAPTURE;
 }
 
-#define WINRT_IMPORT(func)                                           \
-	do {                                                         \
-		exports->func = (PFN_##func)os_dlsym(module, #func); \
-		if (!exports->func) {                                \
-			success = false;                             \
-			blog(LOG_ERROR,                              \
-			     "Could not load function '%s' from "    \
-			     "module '%s'",                          \
-			     #func, module_name);                    \
-		}                                                    \
+#define WINRT_IMPORT(func)                                                \
+	do {                                                              \
+		exports->func = func;                                     \
+		if (!exports->func) {                                     \
+			success = false;                                  \
+			blog(LOG_ERROR, "Could not load function '%s' "); \
+		}                                                         \
 	} while (false)
 
-static bool load_winrt_imports(struct winrt_exports *exports, void *module, const char *module_name)
+static bool load_winrt_imports(struct winrt_exports *exports)
 {
 	bool success = true;
 
@@ -306,11 +305,7 @@ static void *wc_create(obs_data_t *settings, obs_source_t *source)
 	pthread_mutex_init(&wc->update_mutex, NULL);
 
 	if (graphics_uses_d3d11) {
-		static const char *const module = "libobs-winrt";
-		wc->winrt_module = os_dlopen(module);
-		if (wc->winrt_module) {
-			load_winrt_imports(&wc->exports, wc->winrt_module, module);
-		}
+		load_winrt_imports(&wc->exports);
 	}
 
 	const HMODULE hModuleUser32 = GetModuleHandle(L"User32.dll");
@@ -526,7 +521,7 @@ static obs_properties_t *wc_properties(void *data)
 	/* Add "[Select a window]" on first use to prevent the properties list
 	 * widget from selecting the first one in the list automatically */
 	if (wc && (!wc->title || !wc->class || !wc->executable)) {
-		obs_property_list_add_string(p, obs_module_text("SelectAWindow"), "");
+		obs_property_list_add_string(p, obs_module_text(win_capture, "SelectAWindow"), "");
 		obs_property_list_item_disable(p, 0, true);
 	}
 

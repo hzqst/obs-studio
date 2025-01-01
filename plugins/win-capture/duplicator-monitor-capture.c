@@ -13,6 +13,8 @@
 #include <winrt-capture.h>
 #endif
 
+OBS_DECLARE_MODULE(win_capture);
+
 #define do_log(level, format, ...) \
 	blog(level, "[duplicator-monitor-capture: '%s'] " format, obs_source_get_name(capture->source), ##__VA_ARGS__)
 
@@ -22,16 +24,16 @@
 
 /* clang-format off */
 
-#define TEXT_MONITOR_CAPTURE obs_module_text("MonitorCapture")
-#define TEXT_CAPTURE_CURSOR  obs_module_text("CaptureCursor")
-#define TEXT_COMPATIBILITY   obs_module_text("Compatibility")
-#define TEXT_MONITOR         obs_module_text("Monitor")
-#define TEXT_PRIMARY_MONITOR obs_module_text("PrimaryMonitor")
-#define TEXT_METHOD          obs_module_text("Method")
-#define TEXT_METHOD_AUTO     obs_module_text("WindowCapture.Method.Auto")
-#define TEXT_METHOD_DXGI     obs_module_text("Method.DXGI")
-#define TEXT_METHOD_WGC      obs_module_text("Method.WindowsGraphicsCapture")
-#define TEXT_FORCE_SDR       obs_module_text("ForceSdr")
+#define TEXT_MONITOR_CAPTURE obs_module_text(win_capture, "MonitorCapture")
+#define TEXT_CAPTURE_CURSOR  obs_module_text(win_capture, "CaptureCursor")
+#define TEXT_COMPATIBILITY   obs_module_text(win_capture, "Compatibility")
+#define TEXT_MONITOR         obs_module_text(win_capture, "Monitor")
+#define TEXT_PRIMARY_MONITOR obs_module_text(win_capture, "PrimaryMonitor")
+#define TEXT_METHOD          obs_module_text(win_capture, "Method")
+#define TEXT_METHOD_AUTO     obs_module_text(win_capture, "WindowCapture.Method.Auto")
+#define TEXT_METHOD_DXGI     obs_module_text(win_capture, "Method.DXGI")
+#define TEXT_METHOD_WGC      obs_module_text(win_capture, "Method.WindowsGraphicsCapture")
+#define TEXT_FORCE_SDR       obs_module_text(win_capture, "ForceSdr")
 
 /* clang-format on */
 
@@ -93,7 +95,7 @@ struct duplicator_capture {
 	float reset_timeout;
 	struct cursor_data cursor_data;
 
-	void *winrt_module;
+	//void *winrt_module;
 	struct winrt_exports exports;
 	struct winrt_capture *capture_winrt;
 };
@@ -355,11 +357,6 @@ static void duplicator_actual_destroy(void *data)
 
 	obs_leave_graphics();
 
-	if (capture->winrt_module) {
-		os_dlclose(capture->winrt_module);
-		capture->winrt_module = NULL;
-	}
-
 	pthread_mutex_destroy(&capture->update_mutex);
 
 	bfree(capture);
@@ -390,17 +387,15 @@ static void duplicator_capture_update(void *data, obs_data_t *settings)
 
 #define WINRT_IMPORT(func)                                           \
 	do {                                                         \
-		exports->func = (PFN_##func)os_dlsym(module, #func); \
+		exports->func = func; \
 		if (!exports->func) {                                \
 			success = false;                             \
 			blog(LOG_ERROR,                              \
-			     "Could not load function '%s' from "    \
-			     "module '%s'",                          \
-			     #func, module_name);                    \
+			     "Could not load function '%s' ");		 \
 		}                                                    \
 	} while (false)
 
-static bool load_winrt_imports(struct winrt_exports *exports, void *module, const char *module_name)
+static bool load_winrt_imports(struct winrt_exports *exports)
 {
 	bool success = true;
 
@@ -429,11 +424,7 @@ static void *duplicator_capture_create(obs_data_t *settings, obs_source_t *sourc
 	pthread_mutex_init(&capture->update_mutex, NULL);
 
 	if (graphics_uses_d3d11) {
-		static const char *const module = "libobs-winrt";
-		capture->winrt_module = os_dlopen(module);
-		if (capture->winrt_module) {
-			load_winrt_imports(&capture->exports, capture->winrt_module, module);
-		}
+		load_winrt_imports(&capture->exports);
 	}
 
 	update_settings(capture, settings);
@@ -808,7 +799,7 @@ static obs_properties_t *duplicator_capture_properties(void *data)
 							   OBS_COMBO_FORMAT_STRING);
 
 	if (capture && strcmp(capture->monitor_id, INVALID_DISPLAY) == 0) {
-		obs_property_list_add_string(monitors, obs_module_text("SelectADisplay"), INVALID_DISPLAY);
+		obs_property_list_add_string(monitors, obs_module_text(win_capture, "SelectADisplay"), INVALID_DISPLAY);
 		obs_property_list_item_disable(monitors, 0, true);
 	}
 

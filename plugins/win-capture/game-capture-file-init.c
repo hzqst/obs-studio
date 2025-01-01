@@ -9,6 +9,8 @@
 #include <util/c99defs.h>
 #include <util/base.h>
 
+OBS_DECLARE_MODULE(win_capture);
+
 /* ------------------------------------------------------------------------- */
 /* helper funcs                                                              */
 
@@ -160,7 +162,7 @@ char *get_hook_path(bool b64)
 		return path_utf8;
 	}
 
-	return obs_module_file(b64 ? "graphics-hook64.dll" : "graphics-hook32.dll");
+	return obs_module_file(win_capture ,b64 ? "graphics-hook64.dll" : "graphics-hook32.dll");
 }
 
 /* ------------------------------------------------------------------------- */

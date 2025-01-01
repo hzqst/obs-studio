@@ -20,6 +20,8 @@
 #include "audio-helpers.h"
 #include "nt-stuff.h"
 
+OBS_DECLARE_MODULE(win_capture);
+
 #define do_log(level, format, ...) \
 	blog(level, "[game-capture: '%s'] " format, obs_source_get_name(gc->source), ##__VA_ARGS__)
 
@@ -53,36 +55,36 @@
 #define HOTKEY_START             "hotkey_start"
 #define HOTKEY_STOP              "hotkey_stop"
 
-#define TEXT_MODE                  obs_module_text("Mode")
-#define TEXT_GAME_CAPTURE          obs_module_text("GameCapture")
-#define TEXT_ANY_FULLSCREEN        obs_module_text("GameCapture.AnyFullscreen")
-#define TEXT_SLI_COMPATIBILITY     obs_module_text("SLIFix")
-#define TEXT_ALLOW_TRANSPARENCY    obs_module_text("AllowTransparency")
-#define TEXT_PREMULTIPLIED_ALPHA   obs_module_text("PremultipliedAlpha")
-#define TEXT_WINDOW                obs_module_text("WindowCapture.Window")
-#define TEXT_MATCH_PRIORITY        obs_module_text("WindowCapture.Priority")
-#define TEXT_MATCH_TITLE           obs_module_text("WindowCapture.Priority.Title")
-#define TEXT_MATCH_CLASS           obs_module_text("WindowCapture.Priority.Class")
-#define TEXT_MATCH_EXE             obs_module_text("WindowCapture.Priority.Exe")
-#define TEXT_CAPTURE_CURSOR        obs_module_text("CaptureCursor")
-#define TEXT_LIMIT_FRAMERATE       obs_module_text("GameCapture.LimitFramerate")
-#define TEXT_CAPTURE_OVERLAYS      obs_module_text("GameCapture.CaptureOverlays")
-#define TEXT_ANTI_CHEAT_HOOK       obs_module_text("GameCapture.AntiCheatHook")
-#define TEXT_HOOK_RATE             obs_module_text("GameCapture.HookRate")
-#define TEXT_HOOK_RATE_SLOW        obs_module_text("GameCapture.HookRate.Slow")
-#define TEXT_HOOK_RATE_NORMAL      obs_module_text("GameCapture.HookRate.Normal")
-#define TEXT_HOOK_RATE_FAST        obs_module_text("GameCapture.HookRate.Fast")
-#define TEXT_HOOK_RATE_FASTEST     obs_module_text("GameCapture.HookRate.Fastest")
-#define TEXT_RGBA10A2_SPACE        obs_module_text("GameCapture.Rgb10a2Space")
-#define TEXT_RGBA10A2_SPACE_SRGB   obs_module_text("GameCapture.Rgb10a2Space.Srgb")
-#define TEXT_RGBA10A2_SPACE_2100PQ obs_module_text("GameCapture.Rgb10a2Space.2100PQ")
+#define TEXT_MODE                  obs_module_text(win_capture, "Mode")
+#define TEXT_GAME_CAPTURE          obs_module_text(win_capture, "GameCapture")
+#define TEXT_ANY_FULLSCREEN        obs_module_text(win_capture, "GameCapture.AnyFullscreen")
+#define TEXT_SLI_COMPATIBILITY     obs_module_text(win_capture, "SLIFix")
+#define TEXT_ALLOW_TRANSPARENCY    obs_module_text(win_capture, "AllowTransparency")
+#define TEXT_PREMULTIPLIED_ALPHA   obs_module_text(win_capture, "PremultipliedAlpha")
+#define TEXT_WINDOW                obs_module_text(win_capture, "WindowCapture.Window")
+#define TEXT_MATCH_PRIORITY        obs_module_text(win_capture, "WindowCapture.Priority")
+#define TEXT_MATCH_TITLE           obs_module_text(win_capture, "WindowCapture.Priority.Title")
+#define TEXT_MATCH_CLASS           obs_module_text(win_capture, "WindowCapture.Priority.Class")
+#define TEXT_MATCH_EXE             obs_module_text(win_capture, "WindowCapture.Priority.Exe")
+#define TEXT_CAPTURE_CURSOR        obs_module_text(win_capture, "CaptureCursor")
+#define TEXT_LIMIT_FRAMERATE       obs_module_text(win_capture, "GameCapture.LimitFramerate")
+#define TEXT_CAPTURE_OVERLAYS      obs_module_text(win_capture, "GameCapture.CaptureOverlays")
+#define TEXT_ANTI_CHEAT_HOOK       obs_module_text(win_capture, "GameCapture.AntiCheatHook")
+#define TEXT_HOOK_RATE             obs_module_text(win_capture, "GameCapture.HookRate")
+#define TEXT_HOOK_RATE_SLOW        obs_module_text(win_capture, "GameCapture.HookRate.Slow")
+#define TEXT_HOOK_RATE_NORMAL      obs_module_text(win_capture, "GameCapture.HookRate.Normal")
+#define TEXT_HOOK_RATE_FAST        obs_module_text(win_capture, "GameCapture.HookRate.Fast")
+#define TEXT_HOOK_RATE_FASTEST     obs_module_text(win_capture, "GameCapture.HookRate.Fastest")
+#define TEXT_RGBA10A2_SPACE        obs_module_text(win_capture, "GameCapture.Rgb10a2Space")
+#define TEXT_RGBA10A2_SPACE_SRGB   obs_module_text(win_capture, "GameCapture.Rgb10a2Space.Srgb")
+#define TEXT_RGBA10A2_SPACE_2100PQ obs_module_text(win_capture, "GameCapture.Rgb10a2Space.2100PQ")
 
 #define TEXT_MODE_ANY            TEXT_ANY_FULLSCREEN
-#define TEXT_MODE_WINDOW         obs_module_text("GameCapture.CaptureWindow")
-#define TEXT_MODE_HOTKEY         obs_module_text("GameCapture.UseHotkey")
+#define TEXT_MODE_WINDOW         obs_module_text(win_capture, "GameCapture.CaptureWindow")
+#define TEXT_MODE_HOTKEY         obs_module_text(win_capture, "GameCapture.UseHotkey")
 
-#define TEXT_HOTKEY_START        obs_module_text("GameCapture.HotkeyStart")
-#define TEXT_HOTKEY_STOP         obs_module_text("GameCapture.HotkeyStop")
+#define TEXT_HOTKEY_START        obs_module_text(win_capture, "GameCapture.HotkeyStart")
+#define TEXT_HOTKEY_STOP         obs_module_text(win_capture, "GameCapture.HotkeyStop")
 
 /* clang-format on */
 
@@ -919,9 +921,9 @@ static inline bool inject_hook(struct game_capture *gc)
 	char *hook_path;
 
 	if (gc->process_is_64bit) {
-		inject_path = obs_module_file("inject-helper64.exe");
+		inject_path = obs_module_file(win_capture, "inject-helper64.exe");
 	} else {
-		inject_path = obs_module_file("inject-helper32.exe");
+		inject_path = obs_module_file(win_capture, "inject-helper32.exe");
 	}
 
 	hook_path = get_hook_path(gc->process_is_64bit);

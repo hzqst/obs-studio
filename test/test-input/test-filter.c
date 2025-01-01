@@ -1,5 +1,7 @@
 #include <obs-module.h>
 
+OBS_DECLARE_MODULE(test_input);
+
 struct test_filter {
 	obs_source_t *source;
 	gs_effect_t *whatever;
@@ -32,7 +34,7 @@ static void *filter_create(obs_data_t *settings, obs_source_t *source)
 
 	obs_enter_graphics();
 
-	effect_file = obs_module_file("test.effect");
+	effect_file = obs_module_file(test_input, "test.effect");
 
 	tf->source = source;
 	tf->whatever = gs_effect_create_from_file(effect_file, NULL);

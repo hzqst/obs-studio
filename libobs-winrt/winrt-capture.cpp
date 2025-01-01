@@ -1,6 +1,6 @@
 #include "winrt-capture.h"
 
-extern "C" EXPORT BOOL winrt_capture_supported()
+extern "C" BOOL winrt_capture_supported()
 try {
 	/* no contract for IGraphicsCaptureItemInterop, verify 10.0.18362.0 */
 	return winrt::Windows::Foundation::Metadata::ApiInformation::IsApiContractPresent(
@@ -14,7 +14,7 @@ try {
 	return false;
 }
 
-extern "C" EXPORT BOOL winrt_capture_cursor_toggle_supported()
+extern "C" BOOL winrt_capture_cursor_toggle_supported()
 try {
 	return winrt::Windows::Foundation::Metadata::ApiInformation::IsPropertyPresent(
 		L"Windows.Graphics.Capture.GraphicsCaptureSession", L"IsCursorCaptureEnabled");

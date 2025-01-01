@@ -8,5 +8,10 @@ target_link_libraries(win-test PRIVATE OBS::libobs)
 target_link_libraries(win-test PRIVATE OBS::libobs-d3d11)
 target_link_libraries(win-test PRIVATE OBS::libobs-winrt)
 target_link_libraries(win-test PRIVATE OBS::test-input)
+target_link_libraries(win-test PRIVATE OBS::capture)
+
+if(MSVC)
+  set_target_properties(win-test PROPERTIES VS_DPI_AWARE "PerMonitor")
+endif()
 
 set_target_properties(win-test PROPERTIES FOLDER "tests and examples")

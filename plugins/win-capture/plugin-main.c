@@ -12,12 +12,12 @@
 #include "compat-config.h"
 #endif
 
+OBS_DECLARE_MODULE(win_capture);
+
 #define WIN_CAPTURE_LOG_STRING "[win-capture plugin] "
 #define WIN_CAPTURE_VER_STRING "win-capture plugin (libobs " OBS_VERSION ")"
 
-OBS_DECLARE_MODULE()
-OBS_MODULE_USE_DEFAULT_LOCALE("win-capture", "en-US")
-MODULE_EXPORT const char *obs_module_description(void)
+static const char *obs_module_description(void)
 {
 	return "Windows game/screen/window capture";
 }
@@ -101,7 +101,7 @@ void init_hook_files(void);
 bool graphics_uses_d3d11 = false;
 bool wgc_supported = false;
 
-bool obs_module_load(void)
+static bool obs_module_load(void)
 {
 	struct win_version_info ver;
 	bool win8_or_above = false;
@@ -113,8 +113,8 @@ bool obs_module_load(void)
 
 	struct win_version_info win1903 = {.major = 10, .minor = 0, .build = 18362, .revis = 0};
 
-	local_dir = obs_module_file(NULL);
-	config_dir = obs_module_config_path(NULL);
+	local_dir = obs_module_file(win_capture, NULL);
+	config_dir = obs_module_config_path(win_capture, NULL);
 	if (config_dir) {
 		os_mkdirs(config_dir);
 
@@ -144,7 +144,7 @@ bool obs_module_load(void)
 
 	obs_register_source(&window_capture_info);
 
-	char *config_path = obs_module_config_path(NULL);
+	char *config_path = obs_module_config_path(win_capture, NULL);
 
 	init_hook_files();
 	init_hooks_thread = CreateThread(NULL, 0, init_hooks, config_path, 0, NULL);
@@ -153,9 +153,27 @@ bool obs_module_load(void)
 	return true;
 }
 
-void obs_module_unload(void)
+static void obs_module_unload(void)
 {
 	wait_for_hook_initialization();
 	update_info_destroy(update_info);
 	compat_json_free();
 }
+
+static void obs_module_post_load(void)
+{
+
+}
+
+static const char *obs_module_name(void)
+{
+	return "win_capture";
+}
+
+static const char *obs_module_author(void)
+{
+	return "";
+}
+
+OBS_MODULE_USE_DEFAULT_LOCALE(win_capture, "en-US");
+OBS_DEFINE_MODULE(win_capture);

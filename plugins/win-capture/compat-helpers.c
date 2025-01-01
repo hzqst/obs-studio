@@ -8,6 +8,8 @@
 #include "compat-helpers.h"
 #include "compat-format-ver.h"
 
+OBS_DECLARE_MODULE(win_capture);
+
 enum match_flags {
 	MATCH_EXE = 1 << 0,
 	MATCH_TITLE = 1 << 1,
@@ -93,14 +95,14 @@ static json_t *open_compat_file(void)
 	char *file;
 	json_t *root = NULL;
 
-	file = obs_module_config_path("compatibility.json");
+	file = obs_module_config_path(win_capture, "compatibility.json");
 	if (file) {
 		root = open_json_file(file);
 		bfree(file);
 	}
 
 	if (!root) {
-		file = obs_module_file("compatibility.json");
+		file = obs_module_file(win_capture, "compatibility.json");
 		if (file) {
 			root = open_json_file(file);
 			bfree(file);
@@ -152,7 +154,7 @@ struct compat_result *check_compatibility(const char *win_title, const char *win
 		/* Attempt to translate and compile message */
 		const char *key = get_string_val(entry, "translation_key");
 		const char *msg = get_string_val(entry, "message");
-		obs_module_get_string(key, &msg);
+		obs_module_get_string(win_capture, key, &msg);
 
 		dstr_init_copy(&message, msg);
 

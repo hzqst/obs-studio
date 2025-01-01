@@ -487,7 +487,7 @@ static int obs_init_graphics(struct obs_video_info *ovi)
 
 	profile_start(obs_init_graphics_name);
 
-	errorcode = gs_create(&video->graphics, ovi->graphics_module, ovi->adapter);
+	errorcode = gs_create(&video->graphics, ovi->graphics_subsystem, ovi->adapter);
 	if (errorcode != GS_SUCCESS) {
 		profile_end(obs_init_graphics_name);
 

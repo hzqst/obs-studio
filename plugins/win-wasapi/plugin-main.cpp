@@ -4,7 +4,7 @@
 
 #include <util/windows/win-version.h>
 
-OBS_DECLARE_MODULE()
+OBS_DECLARE_MODULE(win_wasapi)
 OBS_MODULE_USE_DEFAULT_LOCALE("win-wasapi", "en-US")
 
 MODULE_EXPORT const char *obs_module_description(void)

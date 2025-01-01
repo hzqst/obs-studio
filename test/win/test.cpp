@@ -6,6 +6,7 @@
 #include <graphics/vec2.h>
 #include <media-io/audio-resampler.h>
 #include <obs.h>
+#include <obs-module.h>
 
 #include <intrin.h>
 
@@ -90,7 +91,7 @@ static void CreateOBS(HWND hwnd)
 	ovi.base_height = rc.bottom;
 	ovi.fps_num = 30000;
 	ovi.fps_den = 1001;
-	ovi.graphics_module = "d3d11";
+	ovi.graphics_subsystem = "d3d11";
 	ovi.output_format = VIDEO_FORMAT_RGBA;
 	ovi.output_width = rc.right;
 	ovi.output_height = rc.bottom;
@@ -130,7 +131,7 @@ static HWND CreateTestWindow(HINSTANCE instance)
 	WNDCLASS wc;
 
 	memset(&wc, 0, sizeof(wc));
-	wc.lpszClassName = TEXT("bla");
+	wc.lpszClassName = TEXT("test");
 	wc.hbrBackground = (HBRUSH)COLOR_WINDOW;
 	wc.hInstance = instance;
 	wc.hCursor = LoadCursor(NULL, IDC_ARROW);
@@ -139,7 +140,7 @@ static HWND CreateTestWindow(HINSTANCE instance)
 	if (!RegisterClass(&wc))
 		return 0;
 
-	return CreateWindow(TEXT("bla"), TEXT("bla"), WS_OVERLAPPEDWINDOW | WS_VISIBLE, 1920 / 2 - cx / 2,
+	return CreateWindow(TEXT("test"), TEXT("test"), WS_OVERLAPPEDWINDOW | WS_VISIBLE, 1920 / 2 - cx / 2,
 			    1080 / 2 - cy / 2, cx, cy, NULL, NULL, instance, NULL);
 }
 
@@ -156,10 +157,10 @@ static void RenderWindow(void *data, uint32_t cx, uint32_t cy)
 
 /* --------------------------------------------------- */
 
-extern "C"
-{
-
-bool obs_module_load_test_input(void);
+extern "C" {
+OBS_DECLARE_MODULE(test_input);
+OBS_DECLARE_MODULE(win_capture);
+}
 
 int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPSTR lpCmdLine, _In_ int nShowCmd)
 {
@@ -180,13 +181,43 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 		//obs_load_all_modules();
 
 		/* load static modules */
-		obs_module_load_test_input();
+		obs_current_module_test_input()->load();
+		obs_current_module_win_capture()->load();
 
 		/* ------------------------------------------------------ */
 		/* create source */
-		auto source = obs_source_create("random", "some random source", NULL, nullptr);
+		auto props = obs_get_source_properties("monitor_capture");
+
+		if (!props)
+			throw "Couldn't get monitor_capture properties";
+
+		auto monitor_ids = obs_properties_get(props, "monitor_id");
+
+		if (!monitor_ids)
+			throw "Couldn't get monitor_ids";
+
+		const char *main_monitor_id = nullptr;
+
+		for (int i = 0; i < obs_property_list_item_count(monitor_ids); ++i)
+		{
+			auto monitor_id = obs_property_list_item_string(monitor_ids, i);
+			if (0 != strcmp(monitor_id, "DUMMY")) {
+				main_monitor_id = monitor_id;
+			}
+		}
+
+		if (!main_monitor_id)
+			throw "Couldn't get main_monitor_id";
+
+		auto settings = obs_data_create();
+		obs_data_set_int(settings, "method", 1);
+		obs_data_set_string(settings, "monitor_id", main_monitor_id);
+
+		auto source = obs_source_create("monitor_capture", "monitor_capture source", settings, nullptr);
 		if (!source)
-			throw "Couldn't create random test source";
+			throw "Couldn't create source";
+
+		obs_data_release(settings);
 
 		/* ------------------------------------------------------ */
 		/* create filter */
@@ -237,5 +268,4 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 	DestroyWindow(hwnd);
 
 	return 0;
-}
 }

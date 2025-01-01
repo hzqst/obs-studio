@@ -8,6 +8,8 @@
 #include <windows.h>
 #include "graphics-hook-info.h"
 
+OBS_DECLARE_MODULE(win_capture);
+
 extern struct graphics_offsets offsets32;
 extern struct graphics_offsets offsets64;
 
@@ -114,7 +116,7 @@ bool cached_versions_match(void)
 	ver_mismatch |= !get_32bit_system_dll_ver(L"d3d9.dll", &d3d9_ver);
 	ver_mismatch |= !get_32bit_system_dll_ver(L"dxgi.dll", &dxgi_ver);
 
-	ver_file = obs_module_config_path("version.ini");
+	ver_file = obs_module_config_path(win_capture, "version.ini");
 	if (!ver_file)
 		return false;
 
@@ -158,7 +160,7 @@ bool load_graphics_offsets(bool is32bit, bool use_hook_address_cache, const char
 
 	dstr_copy(&offset_exe, "get-graphics-offsets");
 	dstr_cat(&offset_exe, is32bit ? "32.exe" : "64.exe");
-	offset_exe_path = obs_module_file(offset_exe.array);
+	offset_exe_path = obs_module_file(win_capture, offset_exe.array);
 
 	dstr_init_move_array(&cmd, offset_exe_path);
 	dstr_insert_ch(&cmd, 0, '\"');

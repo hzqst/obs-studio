@@ -1,13 +1,15 @@
 #include <util/dstr.h>
 #include "dc-capture.h"
 
+OBS_DECLARE_MODULE(win_capture);
+
 /* clang-format off */
 
-#define TEXT_MONITOR_CAPTURE obs_module_text("MonitorCapture")
-#define TEXT_CAPTURE_CURSOR  obs_module_text("CaptureCursor")
-#define TEXT_COMPATIBILITY   obs_module_text("Compatibility")
-#define TEXT_MONITOR         obs_module_text("Monitor")
-#define TEXT_PRIMARY_MONITOR obs_module_text("PrimaryMonitor")
+#define TEXT_MONITOR_CAPTURE obs_module_text(win_capture, "MonitorCapture")
+#define TEXT_CAPTURE_CURSOR  obs_module_text(win_capture, "CaptureCursor")
+#define TEXT_COMPATIBILITY   obs_module_text(win_capture, "Compatibility")
+#define TEXT_MONITOR         obs_module_text(win_capture, "Monitor")
+#define TEXT_PRIMARY_MONITOR obs_module_text(win_capture, "PrimaryMonitor")
 
 /* clang-format on */
 

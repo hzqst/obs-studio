@@ -100,29 +100,6 @@ static inline bool obs_object_valid(const void *obj, const char *f, const char *
 /* ------------------------------------------------------------------------- */
 /* modules */
 
-struct obs_module {
-	char *mod_name;
-	const char *file;
-	char *bin_path;
-	char *data_path;
-	void *module;
-	bool loaded;
-
-	bool (*load)(void);
-	void (*unload)(void);
-	void (*post_load)(void);
-	void (*set_locale)(const char *locale);
-	bool (*get_string)(const char *lookup_string, const char **translated_string);
-	void (*free_locale)(void);
-	uint32_t (*ver)(void);
-	void (*set_pointer)(obs_module_t *module);
-	const char *(*name)(void);
-	const char *(*description)(void);
-	const char *(*author)(void);
-
-	struct obs_module *next;
-};
-
 extern void free_module(struct obs_module *mod);
 
 struct obs_module_path {

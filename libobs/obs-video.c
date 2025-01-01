@@ -988,9 +988,8 @@ struct winrt_exports {
 		if (!exports->func) {                             \
 			success = false;                          \
 			blog(LOG_ERROR,                           \
-			     "Could not load function '%s' from " \
-			     "module '%s'",                       \
-			     #func, module_name);                 \
+			     "Could not load function '%s' "	\
+			     #func);				 \
 		}                                                 \
 	} while (false)
 
@@ -1001,7 +1000,7 @@ void winrt_dispatcher_free(struct winrt_disaptcher *dispatcher);
 void winrt_capture_thread_start();
 void winrt_capture_thread_stop();
 
-static bool load_winrt_imports(struct winrt_exports *exports, void *module, const char *module_name)
+static bool load_winrt_imports(struct winrt_exports *exports)
 {
 	bool success = true;
 
@@ -1017,17 +1016,13 @@ static bool load_winrt_imports(struct winrt_exports *exports, void *module, cons
 
 struct winrt_state {
 	bool loaded;
-	void *winrt_module;
 	struct winrt_exports exports;
 	struct winrt_disaptcher *dispatcher;
 };
 
 static void init_winrt_state(struct winrt_state *winrt)
 {
-	static const char *const module_name = "libobs-winrt";
-
-	winrt->winrt_module = os_dlopen(module_name);
-	winrt->loaded = winrt->winrt_module && load_winrt_imports(&winrt->exports, winrt->winrt_module, module_name);
+	winrt->loaded = load_winrt_imports(&winrt->exports);
 	winrt->dispatcher = NULL;
 	if (winrt->loaded) {
 		winrt->exports.winrt_initialize();
@@ -1041,15 +1036,11 @@ static void init_winrt_state(struct winrt_state *winrt)
 
 static void uninit_winrt_state(struct winrt_state *winrt)
 {
-	if (winrt->winrt_module) {
-		if (winrt->loaded) {
-			winrt->exports.winrt_capture_thread_stop();
-			if (winrt->dispatcher)
-				winrt->exports.winrt_dispatcher_free(winrt->dispatcher);
-			winrt->exports.winrt_uninitialize();
-		}
-
-		os_dlclose(winrt->winrt_module);
+	if (winrt->loaded) {
+		winrt->exports.winrt_capture_thread_stop();
+		if (winrt->dispatcher)
+			winrt->exports.winrt_dispatcher_free(winrt->dispatcher);
+		winrt->exports.winrt_uninitialize();
 	}
 }
 

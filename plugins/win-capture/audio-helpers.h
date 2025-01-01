@@ -6,9 +6,9 @@
 #include "windows.h"
 
 #define SETTING_CAPTURE_AUDIO "capture_audio"
-#define TEXT_CAPTURE_AUDIO obs_module_text("CaptureAudio")
-#define TEXT_CAPTURE_AUDIO_TT obs_module_text("CaptureAudio.TT")
-#define TEXT_CAPTURE_AUDIO_SUFFIX obs_module_text("AudioSuffix")
+#define TEXT_CAPTURE_AUDIO obs_module_text(win_capture, "CaptureAudio")
+#define TEXT_CAPTURE_AUDIO_TT obs_module_text(win_capture, "CaptureAudio.TT")
+#define TEXT_CAPTURE_AUDIO_SUFFIX obs_module_text(win_capture, "AudioSuffix")
 #define AUDIO_SOURCE_TYPE "wasapi_process_output_capture"
 
 void setup_audio_source(obs_source_t *parent, obs_source_t **child, const char *window, bool enabled,

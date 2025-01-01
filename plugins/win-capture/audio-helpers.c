@@ -2,6 +2,8 @@
 
 #include <util/dstr.h>
 
+OBS_DECLARE_MODULE(win_capture);
+
 static inline bool settings_changed(obs_data_t *old_settings, obs_data_t *new_settings)
 {
 	const char *old_window = obs_data_get_string(old_settings, "window");

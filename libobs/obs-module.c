@@ -231,13 +231,19 @@ char *obs_find_module_file(obs_module_t *module, const char *file)
 	if (!module)
 		return NULL;
 
-	dstr_copy(&output, module->data_path);
+	if (module->data_path) {
+		dstr_copy(&output, module->data_path);
+	}
+	else {
+		dstr_copy(&output, ".");
+	}
 	if (!dstr_is_empty(&output) && dstr_end(&output) != '/' && *file)
 		dstr_cat_ch(&output, '/');
 	dstr_cat(&output, file);
 
 	if (!os_file_exists(output.array))
 		dstr_free(&output);
+
 	return output.array;
 }
 

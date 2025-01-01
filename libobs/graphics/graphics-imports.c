@@ -392,47 +392,48 @@ bool load_graphics_imports(struct gs_exports *exports, const char *subsystem_nam
 		GRAPHICS_IMPORT_D3D11(device_debug_marker_end);
 
 		GRAPHICS_IMPORT_D3D11(gs_get_adapter_count);
-	}
 
-	/* OSX/Cocoa specific functions */
+		/* OSX/Cocoa specific functions */
 #ifdef __APPLE__
-	GRAPHICS_IMPORT(device_shared_texture_available);
-	GRAPHICS_IMPORT(device_texture_open_shared);
-	GRAPHICS_IMPORT(device_texture_create_from_iosurface);
-	GRAPHICS_IMPORT(gs_texture_rebind_iosurface);
+		GRAPHICS_IMPORT(device_shared_texture_available);
+		GRAPHICS_IMPORT(device_texture_open_shared);
+		GRAPHICS_IMPORT(device_texture_create_from_iosurface);
+		GRAPHICS_IMPORT(gs_texture_rebind_iosurface);
 
-	/* win32 specific functions */
+		/* win32 specific functions */
 #elif _WIN32
-	GRAPHICS_IMPORT_D3D11(device_gdi_texture_available);
-	GRAPHICS_IMPORT_D3D11(device_shared_texture_available);
-	GRAPHICS_IMPORT_D3D11(device_get_duplicator_monitor_info);
-	GRAPHICS_IMPORT_D3D11(device_duplicator_get_monitor_index);
-	GRAPHICS_IMPORT_D3D11(device_duplicator_create);
-	GRAPHICS_IMPORT_D3D11(gs_duplicator_destroy);
-	GRAPHICS_IMPORT_D3D11(gs_duplicator_update_frame);
-	GRAPHICS_IMPORT_D3D11(gs_duplicator_get_texture);
-	GRAPHICS_IMPORT_D3D11(gs_duplicator_get_color_space);
-	GRAPHICS_IMPORT_D3D11(gs_duplicator_get_sdr_white_level);
-	GRAPHICS_IMPORT_D3D11(device_can_adapter_fast_clear);
-	GRAPHICS_IMPORT_D3D11(device_texture_create_gdi);
-	GRAPHICS_IMPORT_D3D11(gs_texture_get_dc);
-	GRAPHICS_IMPORT_D3D11(gs_texture_release_dc);
-	GRAPHICS_IMPORT_D3D11(device_texture_open_shared);
-	GRAPHICS_IMPORT_D3D11(device_texture_open_nt_shared);
-	GRAPHICS_IMPORT_D3D11(device_texture_get_shared_handle);
-	GRAPHICS_IMPORT_D3D11(device_texture_wrap_obj);
-	GRAPHICS_IMPORT_D3D11(device_texture_acquire_sync);
-	GRAPHICS_IMPORT_D3D11(device_texture_release_sync);
-	GRAPHICS_IMPORT_D3D11(device_stagesurface_create_nv12);
-	GRAPHICS_IMPORT_D3D11(device_stagesurface_create_p010);
-	GRAPHICS_IMPORT_D3D11(device_register_loss_callbacks);
-	GRAPHICS_IMPORT_D3D11(device_unregister_loss_callbacks);
+		GRAPHICS_IMPORT_D3D11(device_gdi_texture_available);
+		GRAPHICS_IMPORT_D3D11(device_shared_texture_available);
+		GRAPHICS_IMPORT_D3D11(device_get_duplicator_monitor_info);
+		GRAPHICS_IMPORT_D3D11(device_duplicator_get_monitor_index);
+		GRAPHICS_IMPORT_D3D11(device_duplicator_create);
+		GRAPHICS_IMPORT_D3D11(gs_duplicator_destroy);
+		GRAPHICS_IMPORT_D3D11(gs_duplicator_update_frame);
+		GRAPHICS_IMPORT_D3D11(gs_duplicator_get_texture);
+		GRAPHICS_IMPORT_D3D11(gs_duplicator_get_color_space);
+		GRAPHICS_IMPORT_D3D11(gs_duplicator_get_sdr_white_level);
+		GRAPHICS_IMPORT_D3D11(device_can_adapter_fast_clear);
+		GRAPHICS_IMPORT_D3D11(device_texture_create_gdi);
+		GRAPHICS_IMPORT_D3D11(gs_texture_get_dc);
+		GRAPHICS_IMPORT_D3D11(gs_texture_release_dc);
+		GRAPHICS_IMPORT_D3D11(device_texture_open_shared);
+		GRAPHICS_IMPORT_D3D11(device_texture_open_nt_shared);
+		GRAPHICS_IMPORT_D3D11(device_texture_get_shared_handle);
+		GRAPHICS_IMPORT_D3D11(device_texture_wrap_obj);
+		GRAPHICS_IMPORT_D3D11(device_texture_acquire_sync);
+		GRAPHICS_IMPORT_D3D11(device_texture_release_sync);
+		GRAPHICS_IMPORT_D3D11(device_stagesurface_create_nv12);
+		GRAPHICS_IMPORT_D3D11(device_stagesurface_create_p010);
+		GRAPHICS_IMPORT_D3D11(device_register_loss_callbacks);
+		GRAPHICS_IMPORT_D3D11(device_unregister_loss_callbacks);
 #elif defined(__linux__) || defined(__FreeBSD__) || defined(__DragonFly__)
-	GRAPHICS_IMPORT(device_texture_create_from_dmabuf);
-	GRAPHICS_IMPORT(device_query_dmabuf_capabilities);
-	GRAPHICS_IMPORT(device_query_dmabuf_modifiers_for_format);
-	GRAPHICS_IMPORT(device_texture_create_from_pixmap);
+		GRAPHICS_IMPORT(device_texture_create_from_dmabuf);
+		GRAPHICS_IMPORT(device_query_dmabuf_capabilities);
+		GRAPHICS_IMPORT(device_query_dmabuf_modifiers_for_format);
+		GRAPHICS_IMPORT(device_texture_create_from_pixmap);
 #endif
+
+	}
 
 	return success;
 }

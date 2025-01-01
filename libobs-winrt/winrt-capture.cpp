@@ -421,18 +421,18 @@ try {
 	return nullptr;
 }
 
-extern "C" EXPORT struct winrt_capture *winrt_capture_init_window(BOOL cursor, HWND window, BOOL client_area,
+extern "C" struct winrt_capture *winrt_capture_init_window(BOOL cursor, HWND window, BOOL client_area,
 								  BOOL force_sdr)
 {
 	return winrt_capture_init_internal(cursor, window, client_area, force_sdr, NULL);
 }
 
-extern "C" EXPORT struct winrt_capture *winrt_capture_init_monitor(BOOL cursor, HMONITOR monitor, BOOL force_sdr)
+extern "C" struct winrt_capture *winrt_capture_init_monitor(BOOL cursor, HMONITOR monitor, BOOL force_sdr)
 {
 	return winrt_capture_init_internal(cursor, NULL, false, force_sdr, monitor);
 }
 
-extern "C" EXPORT void winrt_capture_free(struct winrt_capture *capture)
+extern "C" void winrt_capture_free(struct winrt_capture *capture)
 {
 	if (capture) {
 		struct winrt_capture *current = capture_list;
@@ -480,12 +480,12 @@ extern "C" EXPORT void winrt_capture_free(struct winrt_capture *capture)
 	}
 }
 
-extern "C" EXPORT BOOL winrt_capture_active(const struct winrt_capture *capture)
+extern "C" BOOL winrt_capture_active(const struct winrt_capture *capture)
 {
 	return capture->active;
 }
 
-extern "C" EXPORT BOOL winrt_capture_show_cursor(struct winrt_capture *capture, BOOL visible)
+extern "C" BOOL winrt_capture_show_cursor(struct winrt_capture *capture, BOOL visible)
 {
 	BOOL success = FALSE;
 
@@ -508,12 +508,12 @@ extern "C" EXPORT BOOL winrt_capture_show_cursor(struct winrt_capture *capture, 
 	return success;
 }
 
-extern "C" EXPORT enum gs_color_space winrt_capture_get_color_space(const struct winrt_capture *capture)
+extern "C" enum gs_color_space winrt_capture_get_color_space(const struct winrt_capture *capture)
 {
 	return (capture->format == DXGI_FORMAT_R16G16B16A16_FLOAT) ? GS_CS_709_EXTENDED : GS_CS_SRGB;
 }
 
-extern "C" EXPORT void winrt_capture_render(struct winrt_capture *capture)
+extern "C" void winrt_capture_render(struct winrt_capture *capture)
 {
 	if (capture->texture_written) {
 		const char *tech_name = "Draw";
@@ -564,17 +564,17 @@ extern "C" EXPORT void winrt_capture_render(struct winrt_capture *capture)
 	}
 }
 
-extern "C" EXPORT uint32_t winrt_capture_width(const struct winrt_capture *capture)
+extern "C" uint32_t winrt_capture_width(const struct winrt_capture *capture)
 {
 	return capture ? capture->texture_width : 0;
 }
 
-extern "C" EXPORT uint32_t winrt_capture_height(const struct winrt_capture *capture)
+extern "C" uint32_t winrt_capture_height(const struct winrt_capture *capture)
 {
 	return capture ? capture->texture_height : 0;
 }
 
-extern "C" EXPORT void winrt_capture_thread_start()
+extern "C" void winrt_capture_thread_start()
 {
 	struct winrt_capture *capture = capture_list;
 	void *const device = gs_get_device_obj();
@@ -584,7 +584,7 @@ extern "C" EXPORT void winrt_capture_thread_start()
 	}
 }
 
-extern "C" EXPORT void winrt_capture_thread_stop()
+extern "C" void winrt_capture_thread_stop()
 {
 	struct winrt_capture *capture = capture_list;
 	while (capture) {

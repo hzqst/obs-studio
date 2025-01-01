@@ -99,7 +99,7 @@ static void CreateOBS(HWND hwnd)
 		throw "Couldn't initialize video";
 }
 
-static DisplayContext CreateDisplay(HWND hwnd)
+obs_display_t * CreateDisplayContext(HWND hwnd)
 {
 	RECT rc;
 	GetClientRect(hwnd, &rc);
@@ -156,52 +156,64 @@ static void RenderWindow(void *data, uint32_t cx, uint32_t cy)
 
 /* --------------------------------------------------- */
 
-int WINAPI WinMain(HINSTANCE instance, HINSTANCE prevInstance, LPSTR cmdLine, int numCmd)
+extern "C"
+{
+
+bool obs_module_load_test_input(void);
+
+int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPSTR lpCmdLine, _In_ int nShowCmd)
 {
 	HWND hwnd = NULL;
 	base_set_log_handler(do_log, nullptr);
 
 	try {
-		hwnd = CreateTestWindow(instance);
+		hwnd = CreateTestWindow(hInstance);
 		if (!hwnd)
 			throw "Couldn't create main window";
 
 		/* ------------------------------------------------------ */
-		/* create OBS */
+		/* Create OBS instance */
 		CreateOBS(hwnd);
 
 		/* ------------------------------------------------------ */
 		/* load modules */
-		obs_load_all_modules();
+		//obs_load_all_modules();
+
+		/* load static modules */
+		obs_module_load_test_input();
 
 		/* ------------------------------------------------------ */
 		/* create source */
-		SourceContext source = obs_source_create("random", "some randon source", NULL, nullptr);
+		auto source = obs_source_create("random", "some random source", NULL, nullptr);
 		if (!source)
 			throw "Couldn't create random test source";
 
 		/* ------------------------------------------------------ */
 		/* create filter */
-		SourceContext filter = obs_source_create("test_filter", "a nice green filter", NULL, nullptr);
-		if (!filter)
-			throw "Couldn't create test filter";
-		obs_source_filter_add(source, filter);
+		//SourceContext filter = obs_source_create("test_filter", "a nice green filter", NULL, nullptr);
+		//if (!filter)
+		//	throw "Couldn't create test filter";
+		//obs_source_filter_add(source, filter);
 
 		/* ------------------------------------------------------ */
 		/* create scene and add source to scene (twice) */
-		SceneContext scene = obs_scene_create("test scene");
+		auto scene = obs_scene_create("test scene");
 		if (!scene)
 			throw "Couldn't create scene";
 
 		AddTestItems(scene, source);
 
+		//obs_source_release(source);
+
 		/* ------------------------------------------------------ */
 		/* set the scene as the primary draw source and go */
 		obs_set_output_source(0, obs_scene_get_source(scene));
 
+		obs_scene_release(scene);
+
 		/* ------------------------------------------------------ */
 		/* create display for output and set the output render callback */
-		DisplayContext display = CreateDisplay(hwnd);
+		auto display = CreateDisplayContext(hwnd);
 		obs_display_add_draw_callback(display, RenderWindow, nullptr);
 
 		MSG msg;
@@ -210,17 +222,20 @@ int WINAPI WinMain(HINSTANCE instance, HINSTANCE prevInstance, LPSTR cmdLine, in
 			DispatchMessage(&msg);
 		}
 
+		obs_display_remove_draw_callback(display, RenderWindow, nullptr);
+
+		obs_display_destroy(display);
+		
 	} catch (char *error) {
 		MessageBoxA(NULL, error, NULL, 0);
 	}
-
+	
 	obs_shutdown();
 
 	blog(LOG_INFO, "Number of memory leaks: %ld", bnum_allocs());
+
 	DestroyWindow(hwnd);
 
-	UNUSED_PARAMETER(prevInstance);
-	UNUSED_PARAMETER(cmdLine);
-	UNUSED_PARAMETER(numCmd);
 	return 0;
+}
 }

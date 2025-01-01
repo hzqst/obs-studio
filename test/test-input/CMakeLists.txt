@@ -7,7 +7,7 @@ if(NOT ENABLE_TEST_INPUT)
   return()
 endif()
 
-add_library(test-input MODULE)
+add_library(test-input STATIC)
 add_library(OBS::test-input ALIAS test-input)
 
 target_sources(
@@ -25,4 +25,4 @@ target_sources(
 
 target_link_libraries(test-input PRIVATE OBS::libobs)
 
-set_target_properties_obs(test-input PROPERTIES FOLDER "Tests and Examples" PREFIX "")
+set_target_properties_obs(test-input PROPERTIES FOLDER "tests and examples" PREFIX "")

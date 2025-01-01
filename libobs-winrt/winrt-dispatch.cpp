@@ -1,9 +1,9 @@
-extern "C" EXPORT void winrt_initialize()
+extern "C" void winrt_initialize()
 {
 	winrt::init_apartment(winrt::apartment_type::multi_threaded);
 }
 
-extern "C" EXPORT void winrt_uninitialize()
+extern "C" void winrt_uninitialize()
 {
 	winrt::uninit_apartment();
 }
@@ -23,7 +23,7 @@ struct winrt_disaptcher {
 	winrt::Windows::System::DispatcherQueueController controller{nullptr};
 };
 
-extern "C" EXPORT struct winrt_disaptcher *winrt_dispatcher_init()
+extern "C" struct winrt_disaptcher *winrt_dispatcher_init()
 {
 	struct winrt_disaptcher *dispatcher = NULL;
 	try {
@@ -45,12 +45,14 @@ extern "C" EXPORT struct winrt_disaptcher *winrt_dispatcher_init()
 	return dispatcher;
 }
 
-extern "C" EXPORT void winrt_dispatcher_free(struct winrt_disaptcher *dispatcher)
-try {
-	delete dispatcher;
-} catch (const winrt::hresult_error &err) {
-	blog(LOG_ERROR, "winrt_dispatcher_free (0x%08X): %s", (int32_t)err.code(),
-	     winrt::to_string(err.message()).c_str());
-} catch (...) {
-	blog(LOG_ERROR, "winrt_dispatcher_free (0x%08X)", (int32_t)winrt::to_hresult());
+extern "C" void winrt_dispatcher_free(struct winrt_disaptcher *dispatcher)
+{
+	try {
+		delete dispatcher;
+	} catch (const winrt::hresult_error &err) {
+		blog(LOG_ERROR, "winrt_dispatcher_free (0x%08X): %s", (int32_t)err.code(),
+		     winrt::to_string(err.message()).c_str());
+	} catch (...) {
+		blog(LOG_ERROR, "winrt_dispatcher_free (0x%08X)", (int32_t)winrt::to_hresult());
+	}
 }

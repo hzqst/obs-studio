@@ -10,7 +10,7 @@ extern struct obs_source_info buffering_async_sync_test;
 extern struct obs_source_info sync_video;
 extern struct obs_source_info sync_audio;
 
-bool obs_module_load(void)
+bool obs_module_load_test_input(void)
 {
 	obs_register_source(&test_random);
 	obs_register_source(&test_sinewave);

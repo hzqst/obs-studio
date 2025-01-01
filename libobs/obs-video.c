@@ -982,9 +982,9 @@ struct winrt_exports {
 	void (*winrt_capture_thread_stop)();
 };
 
-#define WINRT_IMPORT(func)                                        \
+#define WINRT_IMPORT_STATIC(func)                                        \
 	do {                                                      \
-		exports->func = os_dlsym(module, #func);          \
+		exports->func = func;          \
 		if (!exports->func) {                             \
 			success = false;                          \
 			blog(LOG_ERROR,                           \
@@ -994,16 +994,23 @@ struct winrt_exports {
 		}                                                 \
 	} while (false)
 
+void winrt_initialize();
+void winrt_uninitialize();
+struct winrt_disaptcher *winrt_dispatcher_init();
+void winrt_dispatcher_free(struct winrt_disaptcher *dispatcher);
+void winrt_capture_thread_start();
+void winrt_capture_thread_stop();
+
 static bool load_winrt_imports(struct winrt_exports *exports, void *module, const char *module_name)
 {
 	bool success = true;
 
-	WINRT_IMPORT(winrt_initialize);
-	WINRT_IMPORT(winrt_uninitialize);
-	WINRT_IMPORT(winrt_dispatcher_init);
-	WINRT_IMPORT(winrt_dispatcher_free);
-	WINRT_IMPORT(winrt_capture_thread_start);
-	WINRT_IMPORT(winrt_capture_thread_stop);
+	WINRT_IMPORT_STATIC(winrt_initialize);
+	WINRT_IMPORT_STATIC(winrt_uninitialize);
+	WINRT_IMPORT_STATIC(winrt_dispatcher_init);
+	WINRT_IMPORT_STATIC(winrt_dispatcher_free);
+	WINRT_IMPORT_STATIC(winrt_capture_thread_start);
+	WINRT_IMPORT_STATIC(winrt_capture_thread_stop);
 
 	return success;
 }

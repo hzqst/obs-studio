@@ -18,6 +18,8 @@ include(helpers)
 option(ENABLE_UI "Enable building with UI (requires Qt)" ON)
 option(ENABLE_SCRIPTING "Enable scripting support" ON)
 option(ENABLE_HEVC "Enable HEVC encoders" ON)
+option(BUILD_TESTS  "Build Tests" OFF)
+
 
 add_subdirectory(libobs)
 if(OS_WINDOWS)
@@ -27,7 +29,7 @@ endif()
 add_subdirectory(libobs-opengl)
 add_subdirectory(plugins)
 
-add_subdirectory(test/test-input)
+add_subdirectory(test)
 
 add_subdirectory(UI)
 

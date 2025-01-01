@@ -14,5 +14,3 @@ target_compile_options(macOS_test PRIVATE -fobjc-arc)
 target_compile_features(macOS_test PRIVATE cxx_std_11)
 
 set_target_properties(macOS_test PROPERTIES FOLDER "tests and examples")
-
-define_graphic_modules(macOS_test)

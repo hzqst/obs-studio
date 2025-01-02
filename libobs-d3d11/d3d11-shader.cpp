@@ -33,6 +33,8 @@ extern "C"
 
 void device_load_texture_d3d11(gs_device_t *device, gs_texture_t *tex, int unit);
 void device_load_texture_srgb_d3d11(gs_device_t *device, gs_texture_t *tex, int unit);
+gs_sparam_t *gs_shader_get_param_by_name_d3d11(gs_shader_t *shader, const char *name);
+void gs_shader_set_default_d3d11(gs_sparam_t *param);
 
 }
 
@@ -88,8 +90,8 @@ gs_vertex_shader::gs_vertex_shader(gs_device_t *device, const char *file, const 
 			throw HRError("Failed to create input layout", hr);
 	}
 
-	viewProj = gs_shader_get_param_by_name(this, "ViewProj");
-	world = gs_shader_get_param_by_name(this, "World");
+	viewProj = gs_shader_get_param_by_name_d3d11(this, "ViewProj");
+	world = gs_shader_get_param_by_name_d3d11(this, "World");
 }
 
 gs_pixel_shader::gs_pixel_shader(gs_device_t *device, const char *file, const char *shaderString)
@@ -204,7 +206,7 @@ void gs_shader::BuildConstantBuffer()
 	}
 
 	for (size_t i = 0; i < params.size(); i++)
-		gs_shader_set_default(&params[i]);
+		gs_shader_set_default_d3d11(&params[i]);
 }
 
 static uint64_t fnv1a_hash(const char *str, size_t len)
@@ -508,4 +510,5 @@ void gs_shader_set_next_sampler_d3d11(gs_sparam_t *param, gs_samplerstate_t *sam
 {
 	param->nextSampler = sampler;
 }
+
 }

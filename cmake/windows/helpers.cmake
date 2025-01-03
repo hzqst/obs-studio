@@ -11,7 +11,7 @@ function(set_target_properties_obs target)
   set(multiValueArgs PROPERTIES)
   cmake_parse_arguments(PARSE_ARGV 0 _STPO "${options}" "${oneValueArgs}" "${multiValueArgs}")
 
-  message(DEBUG "Setting additional properties for target ${target}...")
+  message("Setting additional properties for target ${target}...")
 
   while(_STPO_PROPERTIES)
     list(POP_FRONT _STPO_PROPERTIES key value)
@@ -19,6 +19,8 @@ function(set_target_properties_obs target)
   endwhile()
 
   get_target_property(target_type ${target} TYPE)
+
+  message("target type for ${target} is ${target_type} ...")
 
   if(target_type STREQUAL EXECUTABLE)
     if(target STREQUAL obs-browser-helper)
@@ -54,6 +56,19 @@ function(set_target_properties_obs target)
         LIBRARY_DESTINATION "${OBS_LIBRARY_DESTINATION}"
         HEADER_DESTINATION "${OBS_INCLUDE_DESTINATION}"
     )
+  elseif(target_type STREQUAL STATIC_LIBRARY)
+    set_target_properties(${target} PROPERTIES VERSION 0 SOVERSION ${OBS_VERSION_CANONICAL})
+    
+  install(
+      TARGETS ${target}
+      RUNTIME DESTINATION "${OBS_EXECUTABLE_DESTINATION}" COMPONENT Development
+      LIBRARY DESTINATION "${OBS_LIBRARY_DESTINATION}" COMPONENT Development
+      ARCHIVE DESTINATION "${OBS_LIBRARY_DESTINATION}" COMPONENT Development
+      FRAMEWORK DESTINATION Frameworks COMPONENT Development
+      INCLUDES DESTINATION "${OBS_INCLUDE_DESTINATION}"
+      PUBLIC_HEADER DESTINATION "${OBS_INCLUDE_DESTINATION}" COMPONENT Development
+    )
+  
   elseif(target_type STREQUAL MODULE_LIBRARY)
     set_target_properties(${target} PROPERTIES VERSION 0 SOVERSION ${OBS_VERSION_CANONICAL})
 
@@ -94,6 +109,8 @@ function(set_target_properties_obs target)
         DESTINATION "${OBS_SCRIPT_PLUGIN_DESTINATION}"
         COMPONENT Runtime
       )
+      set_property(GLOBAL APPEND PROPERTY OBS_MODULES_ENABLED ${target})
+
     elseif(${target} STREQUAL obs-browser)
       message(DEBUG "Add Chromium Embedded Framework to project for obs-browser plugin...")
       if(TARGET CEF::Library)

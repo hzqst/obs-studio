@@ -17,7 +17,7 @@
 
 #include "gl-subsystem.h"
 
-static bool gl_init_volume(GLenum type, uint32_t num_levels, GLenum format, GLint internal_format, bool compressed,
+static bool gl_init_volume_gl(GLenum type, uint32_t num_levels, GLenum format, GLint internal_format, bool compressed,
 			   uint32_t width, uint32_t height, uint32_t depth, const uint8_t *const **p_data)
 {
 	bool success = true;
@@ -56,7 +56,7 @@ static bool gl_init_volume(GLenum type, uint32_t num_levels, GLenum format, GLin
 	return success;
 }
 
-static bool upload_texture_3d(struct gs_texture_3d *tex, const uint8_t *const *data)
+static bool upload_texture_3d_gl(struct gs_texture_3d *tex, const uint8_t *const *data)
 {
 	uint32_t num_levels = tex->base.levels;
 	bool compressed = gs_is_compressed_format(tex->base.format);
@@ -79,7 +79,7 @@ static bool upload_texture_3d(struct gs_texture_3d *tex, const uint8_t *const *d
 	return success;
 }
 
-static bool create_pixel_unpack_buffer(struct gs_texture_3d *tex)
+static bool create_pixel_unpack_buffer_gl(struct gs_texture_3d *tex)
 {
 	GLsizeiptr size;
 	bool success = true;
@@ -112,7 +112,7 @@ static bool create_pixel_unpack_buffer(struct gs_texture_3d *tex)
 	return success;
 }
 
-gs_texture_t *device_voltexture_create(gs_device_t *device, uint32_t width, uint32_t height, uint32_t depth,
+gs_texture_t *device_voltexture_create_gl(gs_device_t *device, uint32_t width, uint32_t height, uint32_t depth,
 				       enum gs_color_format color_format, uint32_t levels, const uint8_t *const *data,
 				       uint32_t flags)
 {
@@ -158,12 +158,12 @@ gs_texture_t *device_voltexture_create(gs_device_t *device, uint32_t width, uint
 	return (gs_texture_t *)tex;
 
 fail:
-	gs_texture_destroy((gs_texture_t *)tex);
+	gs_texture_destroy_gl((gs_texture_t *)tex);
 	blog(LOG_ERROR, "device_voltexture_create (GL) failed");
 	return NULL;
 }
 
-void gs_voltexture_destroy(gs_texture_t *voltex)
+void gs_voltexture_destroy_gl(gs_texture_t *voltex)
 {
-	gs_texture_destroy(voltex);
+	gs_texture_destroy_gl(voltex);
 }

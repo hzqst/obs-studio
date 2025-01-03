@@ -29,6 +29,8 @@
 #include <inttypes.h>
 #include "flv-mux.h"
 
+OBS_DECLARE_MODULE(obs_outputs);
+
 #define do_log(level, format, ...) \
 	blog(level, "[flv output: '%s'] " format, obs_output_get_name(stream->output), ##__VA_ARGS__)
 
@@ -154,7 +156,7 @@ static inline bool active(struct flv_output *stream)
 static const char *flv_output_getname(void *unused)
 {
 	UNUSED_PARAMETER(unused);
-	return obs_module_text("FLVOutput");
+	return obs_module_text(obs_outputs, "FLVOutput");
 }
 
 static void flv_output_stop(void *data, uint64_t ts);
@@ -606,7 +608,7 @@ static obs_properties_t *flv_output_properties(void *unused)
 
 	obs_properties_t *props = obs_properties_create();
 
-	obs_properties_add_text(props, "path", obs_module_text("FLVOutput.FilePath"), OBS_TEXT_DEFAULT);
+	obs_properties_add_text(props, "path", obs_module_text(obs_outputs, "FLVOutput.FilePath"), OBS_TEXT_DEFAULT);
 	return props;
 }
 

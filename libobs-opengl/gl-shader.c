@@ -235,7 +235,7 @@ static bool gl_shader_init(struct gs_shader *shader, struct gl_shader_parser *gl
 	return success;
 }
 
-static struct gs_shader *shader_create(gs_device_t *device, enum gs_shader_type type, const char *shader_str,
+static struct gs_shader *shader_create_gl(gs_device_t *device, enum gs_shader_type type, const char *shader_str,
 				       const char *file, char **error_string)
 {
 	struct gs_shader *shader = bzalloc(sizeof(struct gs_shader));
@@ -260,25 +260,27 @@ static struct gs_shader *shader_create(gs_device_t *device, enum gs_shader_type 
 	return shader;
 }
 
-gs_shader_t *device_vertexshader_create(gs_device_t *device, const char *shader, const char *file, char **error_string)
+gs_shader_t *device_vertexshader_create_gl(gs_device_t *device, const char *shader, const char *file,
+					   char **error_string)
 {
 	struct gs_shader *ptr;
-	ptr = shader_create(device, GS_SHADER_VERTEX, shader, file, error_string);
+	ptr = shader_create_gl(device, GS_SHADER_VERTEX, shader, file, error_string);
 	if (!ptr)
 		blog(LOG_ERROR, "device_vertexshader_create (GL) failed");
 	return ptr;
 }
 
-gs_shader_t *device_pixelshader_create(gs_device_t *device, const char *shader, const char *file, char **error_string)
+gs_shader_t *device_pixelshader_create_gl(gs_device_t *device, const char *shader, const char *file,
+					  char **error_string)
 {
 	struct gs_shader *ptr;
-	ptr = shader_create(device, GS_SHADER_PIXEL, shader, file, error_string);
+	ptr = shader_create_gl(device, GS_SHADER_PIXEL, shader, file, error_string);
 	if (!ptr)
 		blog(LOG_ERROR, "device_pixelshader_create (GL) failed");
 	return ptr;
 }
 
-static void remove_program_references(struct gs_shader *shader)
+static void remove_program_references_gl(struct gs_shader *shader)
 {
 	struct gs_program *program = shader->device->first_program;
 
@@ -293,13 +295,13 @@ static void remove_program_references(struct gs_shader *shader)
 			destroy = true;
 
 		if (destroy)
-			gs_program_destroy(program);
+			gs_program_destroy_gl(program);
 
 		program = next;
 	}
 }
 
-void gs_shader_destroy(gs_shader_t *shader)
+void gs_shader_destroy_gl(gs_shader_t *shader)
 {
 	size_t i;
 
@@ -328,18 +330,18 @@ void gs_shader_destroy(gs_shader_t *shader)
 	bfree(shader);
 }
 
-int gs_shader_get_num_params(const gs_shader_t *shader)
+int gs_shader_get_num_params_gl(const gs_shader_t *shader)
 {
 	return (int)shader->params.num;
 }
 
-gs_sparam_t *gs_shader_get_param_by_idx(gs_shader_t *shader, uint32_t param)
+gs_sparam_t *gs_shader_get_param_by_idx_gl(gs_shader_t *shader, uint32_t param)
 {
 	assert(param < shader->params.num);
 	return shader->params.array + param;
 }
 
-gs_sparam_t *gs_shader_get_param_by_name(gs_shader_t *shader, const char *name)
+gs_sparam_t *gs_shader_get_param_by_name_gl(gs_shader_t *shader, const char *name)
 {
 	size_t i;
 	for (i = 0; i < shader->params.num; i++) {
@@ -352,39 +354,39 @@ gs_sparam_t *gs_shader_get_param_by_name(gs_shader_t *shader, const char *name)
 	return NULL;
 }
 
-gs_sparam_t *gs_shader_get_viewproj_matrix(const gs_shader_t *shader)
+gs_sparam_t *gs_shader_get_viewproj_matrix_gl(const gs_shader_t *shader)
 {
 	return shader->viewproj;
 }
 
-gs_sparam_t *gs_shader_get_world_matrix(const gs_shader_t *shader)
+gs_sparam_t *gs_shader_get_world_matrix_gl(const gs_shader_t *shader)
 {
 	return shader->world;
 }
 
-void gs_shader_get_param_info(const gs_sparam_t *param, struct gs_shader_param_info *info)
+void gs_shader_get_param_info_gl(const gs_sparam_t *param, struct gs_shader_param_info *info)
 {
 	info->type = param->type;
 	info->name = param->name;
 }
 
-void gs_shader_set_bool(gs_sparam_t *param, bool val)
+void gs_shader_set_bool_gl(gs_sparam_t *param, bool val)
 {
 	int int_val = val;
 	da_copy_array(param->cur_value, &int_val, sizeof(int_val));
 }
 
-void gs_shader_set_float(gs_sparam_t *param, float val)
+void gs_shader_set_float_gl(gs_sparam_t *param, float val)
 {
 	da_copy_array(param->cur_value, &val, sizeof(val));
 }
 
-void gs_shader_set_int(gs_sparam_t *param, int val)
+void gs_shader_set_int_gl(gs_sparam_t *param, int val)
 {
 	da_copy_array(param->cur_value, &val, sizeof(val));
 }
 
-void gs_shader_set_matrix3(gs_sparam_t *param, const struct matrix3 *val)
+void gs_shader_set_matrix3_gl(gs_sparam_t *param, const struct matrix3 *val)
 {
 	struct matrix4 mat;
 	matrix4_from_matrix3(&mat, val);
@@ -392,32 +394,32 @@ void gs_shader_set_matrix3(gs_sparam_t *param, const struct matrix3 *val)
 	da_copy_array(param->cur_value, &mat, sizeof(mat));
 }
 
-void gs_shader_set_matrix4(gs_sparam_t *param, const struct matrix4 *val)
+void gs_shader_set_matrix4_gl(gs_sparam_t *param, const struct matrix4 *val)
 {
 	da_copy_array(param->cur_value, val, sizeof(*val));
 }
 
-void gs_shader_set_vec2(gs_sparam_t *param, const struct vec2 *val)
+void gs_shader_set_vec2_gl(gs_sparam_t *param, const struct vec2 *val)
 {
 	da_copy_array(param->cur_value, val->ptr, sizeof(*val));
 }
 
-void gs_shader_set_vec3(gs_sparam_t *param, const struct vec3 *val)
+void gs_shader_set_vec3_gl(gs_sparam_t *param, const struct vec3 *val)
 {
 	da_copy_array(param->cur_value, val->ptr, sizeof(*val));
 }
 
-void gs_shader_set_vec4(gs_sparam_t *param, const struct vec4 *val)
+void gs_shader_set_vec4_gl(gs_sparam_t *param, const struct vec4 *val)
 {
 	da_copy_array(param->cur_value, val->ptr, sizeof(*val));
 }
 
-void gs_shader_set_texture(gs_sparam_t *param, gs_texture_t *val)
+void gs_shader_set_texture_gl(gs_sparam_t *param, gs_texture_t *val)
 {
 	param->texture = val;
 }
 
-static inline bool validate_param(struct program_param *pp, size_t expected_size)
+static inline bool validate_param_gl(struct program_param *pp, size_t expected_size)
 {
 	if (pp->param->cur_value.num != expected_size) {
 		blog(LOG_ERROR,
@@ -430,60 +432,60 @@ static inline bool validate_param(struct program_param *pp, size_t expected_size
 	return true;
 }
 
-static void program_set_param_data(struct gs_program *program, struct program_param *pp)
+static void program_set_param_data_gl(struct gs_program *program, struct program_param *pp)
 {
 	void *array = pp->param->cur_value.array;
 
 	if (pp->param->type == GS_SHADER_PARAM_BOOL || pp->param->type == GS_SHADER_PARAM_INT) {
-		if (validate_param(pp, sizeof(int))) {
+		if (validate_param_gl(pp, sizeof(int))) {
 			glUniform1iv(pp->obj, 1, (int *)array);
 			gl_success("glUniform1iv");
 		}
 
 	} else if (pp->param->type == GS_SHADER_PARAM_INT2) {
-		if (validate_param(pp, sizeof(int) * 2)) {
+		if (validate_param_gl(pp, sizeof(int) * 2)) {
 			glUniform2iv(pp->obj, 1, (int *)array);
 			gl_success("glUniform2iv");
 		}
 
 	} else if (pp->param->type == GS_SHADER_PARAM_INT3) {
-		if (validate_param(pp, sizeof(int) * 3)) {
+		if (validate_param_gl(pp, sizeof(int) * 3)) {
 			glUniform3iv(pp->obj, 1, (int *)array);
 			gl_success("glUniform3iv");
 		}
 
 	} else if (pp->param->type == GS_SHADER_PARAM_INT4) {
-		if (validate_param(pp, sizeof(int) * 4)) {
+		if (validate_param_gl(pp, sizeof(int) * 4)) {
 			glUniform4iv(pp->obj, 1, (int *)array);
 			gl_success("glUniform4iv");
 		}
 
 	} else if (pp->param->type == GS_SHADER_PARAM_FLOAT) {
-		if (validate_param(pp, sizeof(float))) {
+		if (validate_param_gl(pp, sizeof(float))) {
 			glUniform1fv(pp->obj, 1, (float *)array);
 			gl_success("glUniform1fv");
 		}
 
 	} else if (pp->param->type == GS_SHADER_PARAM_VEC2) {
-		if (validate_param(pp, sizeof(struct vec2))) {
+		if (validate_param_gl(pp, sizeof(struct vec2))) {
 			glUniform2fv(pp->obj, 1, (float *)array);
 			gl_success("glUniform2fv");
 		}
 
 	} else if (pp->param->type == GS_SHADER_PARAM_VEC3) {
-		if (validate_param(pp, sizeof(float) * 3)) {
+		if (validate_param_gl(pp, sizeof(float) * 3)) {
 			glUniform3fv(pp->obj, 1, (float *)array);
 			gl_success("glUniform3fv");
 		}
 
 	} else if (pp->param->type == GS_SHADER_PARAM_VEC4) {
-		if (validate_param(pp, sizeof(struct vec4))) {
+		if (validate_param_gl(pp, sizeof(struct vec4))) {
 			glUniform4fv(pp->obj, 1, (float *)array);
 			gl_success("glUniform4fv");
 		}
 
 	} else if (pp->param->type == GS_SHADER_PARAM_MATRIX4X4) {
-		if (validate_param(pp, sizeof(struct matrix4))) {
+		if (validate_param_gl(pp, sizeof(struct matrix4))) {
 			glUniformMatrix4fv(pp->obj, 1, false, (float *)array);
 			gl_success("glUniformMatrix4fv");
 		}
@@ -502,15 +504,15 @@ static void program_set_param_data(struct gs_program *program, struct program_pa
 	}
 }
 
-void program_update_params(struct gs_program *program)
+void program_update_params_gl(struct gs_program *program)
 {
 	for (size_t i = 0; i < program->params.num; i++) {
 		struct program_param *pp = program->params.array + i;
-		program_set_param_data(program, pp);
+		program_set_param_data_gl(program, pp);
 	}
 }
 
-static void print_link_errors(GLuint program)
+static void print_link_errors_gl(GLuint program)
 {
 	char *errors = NULL;
 	GLint info_len = 0;
@@ -529,7 +531,7 @@ static void print_link_errors(GLuint program)
 	free(errors);
 }
 
-static bool assign_program_attrib(struct gs_program *program, struct shader_attrib *attrib)
+static bool assign_program_attrib_gl(struct gs_program *program, struct shader_attrib *attrib)
 {
 	GLint attrib_obj = glGetAttribLocation(program->obj, attrib->name);
 	if (!gl_success("glGetAttribLocation"))
@@ -547,20 +549,20 @@ static bool assign_program_attrib(struct gs_program *program, struct shader_attr
 	return true;
 }
 
-static inline bool assign_program_attribs(struct gs_program *program)
+static inline bool assign_program_attribs_gl(struct gs_program *program)
 {
 	struct gs_shader *shader = program->vertex_shader;
 
 	for (size_t i = 0; i < shader->attribs.num; i++) {
 		struct shader_attrib *attrib = shader->attribs.array + i;
-		if (!assign_program_attrib(program, attrib))
+		if (!assign_program_attrib_gl(program, attrib))
 			return false;
 	}
 
 	return true;
 }
 
-static bool assign_program_param(struct gs_program *program, struct gs_shader_param *param)
+static bool assign_program_param_gl(struct gs_program *program, struct gs_shader_param *param)
 {
 	struct program_param info;
 
@@ -577,28 +579,28 @@ static bool assign_program_param(struct gs_program *program, struct gs_shader_pa
 	return true;
 }
 
-static inline bool assign_program_shader_params(struct gs_program *program, struct gs_shader *shader)
+static inline bool assign_program_shader_params_gl(struct gs_program *program, struct gs_shader *shader)
 {
 	for (size_t i = 0; i < shader->params.num; i++) {
 		struct gs_shader_param *param = shader->params.array + i;
-		if (!assign_program_param(program, param))
+		if (!assign_program_param_gl(program, param))
 			return false;
 	}
 
 	return true;
 }
 
-static inline bool assign_program_params(struct gs_program *program)
+static inline bool assign_program_params_gl(struct gs_program *program)
 {
-	if (!assign_program_shader_params(program, program->vertex_shader))
+	if (!assign_program_shader_params_gl(program, program->vertex_shader))
 		return false;
-	if (!assign_program_shader_params(program, program->pixel_shader))
+	if (!assign_program_shader_params_gl(program, program->pixel_shader))
 		return false;
 
 	return true;
 }
 
-struct gs_program *gs_program_create(struct gs_device *device)
+struct gs_program *gs_program_create_gl(struct gs_device *device)
 {
 	struct gs_program *program = bzalloc(sizeof(*program));
 	int linked = false;
@@ -628,7 +630,7 @@ struct gs_program *gs_program_create(struct gs_device *device)
 		goto error;
 
 	if (linked == GL_FALSE) {
-		print_link_errors(program->obj);
+		print_link_errors_gl(program->obj);
 		goto error;
 	}
 
@@ -660,11 +662,11 @@ error_detach_vertex:
 	gl_success("glDetachShader (vertex)");
 
 error_detach_neither:
-	gs_program_destroy(program);
+	gs_program_destroy_gl(program);
 	return NULL;
 }
 
-void gs_program_destroy(struct gs_program *program)
+void gs_program_destroy_gl(struct gs_program *program)
 {
 	if (!program)
 		return;
@@ -689,7 +691,7 @@ void gs_program_destroy(struct gs_program *program)
 	bfree(program);
 }
 
-void gs_shader_set_val(gs_sparam_t *param, const void *val, size_t size)
+void gs_shader_set_val_gl(gs_sparam_t *param, const void *val, size_t size)
 {
 	int count = param->array_count;
 	size_t expected_size = 0;
@@ -752,12 +754,12 @@ void gs_shader_set_val(gs_sparam_t *param, const void *val, size_t size)
 	}
 }
 
-void gs_shader_set_default(gs_sparam_t *param)
+void gs_shader_set_default_gl(gs_sparam_t *param)
 {
-	gs_shader_set_val(param, param->def_value.array, param->def_value.num);
+	gs_shader_set_val_gl(param, param->def_value.array, param->def_value.num);
 }
 
-void gs_shader_set_next_sampler(gs_sparam_t *param, gs_samplerstate_t *sampler)
+void gs_shader_set_next_sampler_gl(gs_sparam_t *param, gs_samplerstate_t *sampler)
 {
 	param->next_sampler = sampler;
 }

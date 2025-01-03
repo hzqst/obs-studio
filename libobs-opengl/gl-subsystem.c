@@ -156,7 +156,7 @@ static bool gl_init_extensions(struct gs_device *device)
 	return true;
 }
 
-static void clear_textures(struct gs_device *device)
+static void clear_textures_gl(struct gs_device *device)
 {
 	GLenum i;
 	for (i = 0; i < GS_MAX_TEXTURES; i++) {
@@ -199,22 +199,22 @@ void convert_sampler_info(struct gs_sampler_state *sampler, const struct gs_samp
 	     max_anisotropy_max, info->max_anisotropy, sampler->max_anisotropy);
 }
 
-const char *device_get_name(void)
+const char *device_get_name_gl(void)
 {
 	return "OpenGL";
 }
 
-int device_get_type(void)
+int device_get_type_gl(void)
 {
 	return GS_DEVICE_OPENGL;
 }
 
-const char *device_preprocessor_name(void)
+const char *device_preprocessor_name_gl(void)
 {
 	return "_OPENGL";
 }
 
-int device_create(gs_device_t **p_device, uint32_t adapter)
+int device_create_gl(gs_device_t **p_device, uint32_t adapter)
 {
 	struct gs_device *device = bzalloc(sizeof(struct gs_device));
 	int errorcode = GS_ERROR_FAIL;
@@ -278,7 +278,7 @@ fail:
 	return errorcode;
 }
 
-void device_destroy(gs_device_t *device)
+void device_destroy_gl(gs_device_t *device)
 {
 	if (device) {
 		while (device->first_program)
@@ -293,7 +293,7 @@ void device_destroy(gs_device_t *device)
 	}
 }
 
-gs_swapchain_t *device_swapchain_create(gs_device_t *device, const struct gs_init_data *info)
+gs_swapchain_t *device_swapchain_create_gl(gs_device_t *device, const struct gs_init_data *info)
 {
 	struct gs_swap_chain *swap = bzalloc(sizeof(struct gs_swap_chain));
 
@@ -315,7 +315,7 @@ gs_swapchain_t *device_swapchain_create(gs_device_t *device, const struct gs_ini
 	return swap;
 }
 
-void device_resize(gs_device_t *device, uint32_t cx, uint32_t cy)
+void device_resize_gl(gs_device_t *device, uint32_t cx, uint32_t cy)
 {
 	/* GL automatically resizes the device, so it doesn't do much */
 	if (device->cur_swap) {
@@ -328,18 +328,18 @@ void device_resize(gs_device_t *device, uint32_t cx, uint32_t cy)
 	gl_update(device);
 }
 
-enum gs_color_space device_get_color_space(gs_device_t *device)
+enum gs_color_space device_get_color_space_gl(gs_device_t *device)
 {
 	return device->cur_color_space;
 }
 
-void device_update_color_space(gs_device_t *device)
+void device_update_color_space_gl(gs_device_t *device)
 {
 	if (!device->cur_swap)
 		blog(LOG_WARNING, "device_display_change (GL): No active swap");
 }
 
-void device_get_size(const gs_device_t *device, uint32_t *cx, uint32_t *cy)
+void device_get_size_gl(const gs_device_t *device, uint32_t *cx, uint32_t *cy)
 {
 	if (device->cur_swap) {
 		*cx = device->cur_swap->info.cx;
@@ -351,7 +351,7 @@ void device_get_size(const gs_device_t *device, uint32_t *cx, uint32_t *cy)
 	}
 }
 
-uint32_t device_get_width(const gs_device_t *device)
+uint32_t device_get_width_gl(const gs_device_t *device)
 {
 	if (device->cur_swap) {
 		return device->cur_swap->info.cx;
@@ -361,7 +361,7 @@ uint32_t device_get_width(const gs_device_t *device)
 	}
 }
 
-uint32_t device_get_height(const gs_device_t *device)
+uint32_t device_get_height_gl(const gs_device_t *device)
 {
 	if (device->cur_swap) {
 		return device->cur_swap->info.cy;
@@ -371,7 +371,7 @@ uint32_t device_get_height(const gs_device_t *device)
 	}
 }
 
-gs_samplerstate_t *device_samplerstate_create(gs_device_t *device, const struct gs_sampler_info *info)
+gs_samplerstate_t *device_samplerstate_create_gl(gs_device_t *device, const struct gs_sampler_info *info)
 {
 	struct gs_sampler_state *sampler;
 
@@ -383,7 +383,7 @@ gs_samplerstate_t *device_samplerstate_create(gs_device_t *device, const struct 
 	return sampler;
 }
 
-gs_timer_t *device_timer_create(gs_device_t *device)
+gs_timer_t *device_timer_create_gl(gs_device_t *device)
 {
 	UNUSED_PARAMETER(device);
 
@@ -401,19 +401,19 @@ gs_timer_t *device_timer_create(gs_device_t *device)
 	return timer;
 }
 
-gs_timer_range_t *device_timer_range_create(gs_device_t *device)
+gs_timer_range_t *device_timer_range_create_gl(gs_device_t *device)
 {
 	UNUSED_PARAMETER(device);
 
 	return NULL;
 }
 
-enum gs_texture_type device_get_texture_type(const gs_texture_t *texture)
+enum gs_texture_type device_get_texture_type_gl(const gs_texture_t *texture)
 {
 	return texture->type;
 }
 
-static void strip_mipmap_filter(GLint *filter)
+static void strip_mipmap_filter_gl(GLint *filter)
 {
 	switch (*filter) {
 	case GL_NEAREST:
@@ -431,7 +431,7 @@ static void strip_mipmap_filter(GLint *filter)
 	*filter = GL_NEAREST;
 }
 
-static inline void apply_swizzle(struct gs_texture *tex)
+static inline void apply_swizzle_gl(struct gs_texture *tex)
 {
 	if (tex->format == GS_A8) {
 		gl_tex_param_i(tex->gl_target, GL_TEXTURE_SWIZZLE_R, GL_ONE);
@@ -441,7 +441,7 @@ static inline void apply_swizzle(struct gs_texture *tex)
 	}
 }
 
-static bool load_texture_sampler(gs_texture_t *tex, gs_samplerstate_t *ss)
+static bool load_texture_sampler_gl(gs_texture_t *tex, gs_samplerstate_t *ss)
 {
 	bool success = true;
 	GLint min_filter;
@@ -486,7 +486,7 @@ static bool load_texture_sampler(gs_texture_t *tex, gs_samplerstate_t *ss)
 	return success;
 }
 
-static inline struct gs_shader_param *get_texture_param(gs_device_t *device, int unit)
+static inline struct gs_shader_param *get_texture_param_gl(gs_device_t *device, int unit)
 {
 	struct gs_shader *shader = device->cur_pixel_shader;
 	size_t i;
@@ -502,7 +502,7 @@ static inline struct gs_shader_param *get_texture_param(gs_device_t *device, int
 	return NULL;
 }
 
-static void device_load_texture_internal(gs_device_t *device, gs_texture_t *tex, int unit, GLint decode)
+static void device_load_texture_internal_gl(gs_device_t *device, gs_texture_t *tex, int unit, GLint decode)
 {
 	struct gs_shader_param *param;
 	struct gs_sampler_state *sampler;
@@ -553,17 +553,17 @@ fail:
 	blog(LOG_ERROR, "device_load_texture (GL) failed");
 }
 
-void device_load_texture(gs_device_t *device, gs_texture_t *tex, int unit)
+void device_load_texture_gl(gs_device_t *device, gs_texture_t *tex, int unit)
 {
-	device_load_texture_internal(device, tex, unit, GL_SKIP_DECODE_EXT);
+	device_load_texture_internal_gl(device, tex, unit, GL_SKIP_DECODE_EXT);
 }
 
-void device_load_texture_srgb(gs_device_t *device, gs_texture_t *tex, int unit)
+void device_load_texture_srgb_gl(gs_device_t *device, gs_texture_t *tex, int unit)
 {
-	device_load_texture_internal(device, tex, unit, GL_DECODE_EXT);
+	device_load_texture_internal_gl(device, tex, unit, GL_DECODE_EXT);
 }
 
-static bool load_sampler_on_textures(gs_device_t *device, gs_samplerstate_t *ss, int sampler_unit)
+static bool load_sampler_on_textures_gl(gs_device_t *device, gs_samplerstate_t *ss, int sampler_unit)
 {
 	struct gs_shader *shader = device->cur_pixel_shader;
 	size_t i;
@@ -575,7 +575,7 @@ static bool load_sampler_on_textures(gs_device_t *device, gs_samplerstate_t *ss,
 		    param->texture) {
 			if (!gl_active_texture(GL_TEXTURE0 + param->texture_id))
 				return false;
-			if (!load_texture_sampler(param->texture, ss))
+			if (!load_texture_sampler_gl(param->texture, ss))
 				return false;
 		}
 	}
@@ -583,7 +583,7 @@ static bool load_sampler_on_textures(gs_device_t *device, gs_samplerstate_t *ss,
 	return true;
 }
 
-void device_load_samplerstate(gs_device_t *device, gs_samplerstate_t *ss, int unit)
+void device_load_samplerstate_gl(gs_device_t *device, gs_samplerstate_t *ss, int unit)
 {
 	/* need a pixel shader to properly bind samplers */
 	if (!device->cur_pixel_shader)
@@ -597,13 +597,13 @@ void device_load_samplerstate(gs_device_t *device, gs_samplerstate_t *ss, int un
 	if (!ss)
 		return;
 
-	if (!load_sampler_on_textures(device, ss, unit))
+	if (!load_sampler_on_textures_gl(device, ss, unit))
 		blog(LOG_ERROR, "device_load_samplerstate (GL) failed");
 
 	return;
 }
 
-void device_load_vertexshader(gs_device_t *device, gs_shader_t *vertshader)
+void device_load_vertexshader_gl(gs_device_t *device, gs_shader_t *vertshader)
 {
 	if (device->cur_vertex_shader == vertshader)
 		return;
@@ -617,7 +617,7 @@ void device_load_vertexshader(gs_device_t *device, gs_shader_t *vertshader)
 	device->cur_vertex_shader = vertshader;
 }
 
-static void load_default_pixelshader_samplers(struct gs_device *device, struct gs_shader *ps)
+static void load_default_pixelshader_samplers_gl(struct gs_device *device, struct gs_shader *ps)
 {
 	size_t i;
 	if (!ps)
@@ -632,7 +632,7 @@ static void load_default_pixelshader_samplers(struct gs_device *device, struct g
 		device->cur_samplers[i] = NULL;
 }
 
-void device_load_pixelshader(gs_device_t *device, gs_shader_t *pixelshader)
+void device_load_pixelshader_gl(gs_device_t *device, gs_shader_t *pixelshader)
 {
 	if (device->cur_pixel_shader == pixelshader)
 		return;
@@ -644,17 +644,17 @@ void device_load_pixelshader(gs_device_t *device, gs_shader_t *pixelshader)
 
 	device->cur_pixel_shader = pixelshader;
 
-	clear_textures(device);
+	clear_textures_gl(device);
 
 	if (pixelshader)
-		load_default_pixelshader_samplers(device, pixelshader);
+		load_default_pixelshader_samplers_gl(device, pixelshader);
 	return;
 
 fail:
 	blog(LOG_ERROR, "device_load_pixelshader (GL) failed");
 }
 
-void device_load_default_samplerstate(gs_device_t *device, bool b_3d, int unit)
+void device_load_default_samplerstate_gl(gs_device_t *device, bool b_3d, int unit)
 {
 	/* TODO */
 	UNUSED_PARAMETER(device);
@@ -662,27 +662,27 @@ void device_load_default_samplerstate(gs_device_t *device, bool b_3d, int unit)
 	UNUSED_PARAMETER(unit);
 }
 
-gs_shader_t *device_get_vertex_shader(const gs_device_t *device)
+gs_shader_t *device_get_vertex_shader_gl(const gs_device_t *device)
 {
 	return device->cur_vertex_shader;
 }
 
-gs_shader_t *device_get_pixel_shader(const gs_device_t *device)
+gs_shader_t *device_get_pixel_shader_gl(const gs_device_t *device)
 {
 	return device->cur_pixel_shader;
 }
 
-gs_texture_t *device_get_render_target(const gs_device_t *device)
+gs_texture_t *device_get_render_target_gl(const gs_device_t *device)
 {
 	return device->cur_render_target;
 }
 
-gs_zstencil_t *device_get_zstencil_target(const gs_device_t *device)
+gs_zstencil_t *device_get_zstencil_target_gl(const gs_device_t *device)
 {
 	return device->cur_zstencil_buffer;
 }
 
-static bool get_tex_dimensions(gs_texture_t *tex, uint32_t *width, uint32_t *height)
+static bool gl_get_tex_dimensions(gs_texture_t *tex, uint32_t *width, uint32_t *height)
 {
 	if (tex->type == GS_TEXTURE_2D) {
 		struct gs_texture_2d *tex2d = (struct gs_texture_2d *)tex;
@@ -705,7 +705,7 @@ static bool get_tex_dimensions(gs_texture_t *tex, uint32_t *width, uint32_t *hei
  * This automatically manages FBOs so that render targets are always given
  * an FBO that matches their width/height/format to maximize optimization
  */
-struct fbo_info *get_fbo(gs_texture_t *tex, uint32_t width, uint32_t height)
+struct fbo_info *gl_get_fbo(gs_texture_t *tex, uint32_t width, uint32_t height)
 {
 	if (tex->fbo && tex->fbo->width == width && tex->fbo->height == height && tex->fbo->format == tex->format)
 		return tex->fbo;
@@ -727,16 +727,16 @@ struct fbo_info *get_fbo(gs_texture_t *tex, uint32_t width, uint32_t height)
 	return tex->fbo;
 }
 
-static inline struct fbo_info *get_fbo_by_tex(gs_texture_t *tex)
+static inline struct fbo_info *gl_get_fbo_by_tex(gs_texture_t *tex)
 {
 	uint32_t width, height;
-	if (!get_tex_dimensions(tex, &width, &height))
+	if (!gl_get_tex_dimensions(tex, &width, &height))
 		return NULL;
 
-	return get_fbo(tex, width, height);
+	return gl_get_fbo(tex, width, height);
 }
 
-static bool set_current_fbo(gs_device_t *device, struct fbo_info *fbo)
+static bool gl_set_current_fbo(gs_device_t *device, struct fbo_info *fbo)
 {
 	if (device->cur_fbo != fbo) {
 		GLuint fbo_obj = fbo ? fbo->fbo : 0;
@@ -753,7 +753,7 @@ static bool set_current_fbo(gs_device_t *device, struct fbo_info *fbo)
 	return true;
 }
 
-static bool attach_rendertarget(struct fbo_info *fbo, gs_texture_t *tex, int side)
+static bool gl_attach_rendertarget(struct fbo_info *fbo, gs_texture_t *tex, int side)
 {
 	if (fbo->cur_render_target == tex)
 		return true;
@@ -774,7 +774,7 @@ static bool attach_rendertarget(struct fbo_info *fbo, gs_texture_t *tex, int sid
 	return gl_success("glFramebufferTexture2D");
 }
 
-static bool attach_zstencil(struct fbo_info *fbo, gs_zstencil_t *zs)
+static bool gl_attach_zstencil(struct fbo_info *fbo, gs_zstencil_t *zs)
 {
 	GLuint zsbuffer = 0;
 	GLenum zs_attachment = GL_DEPTH_STENCIL_ATTACHMENT;
@@ -796,7 +796,8 @@ static bool attach_zstencil(struct fbo_info *fbo, gs_zstencil_t *zs)
 	return true;
 }
 
-static bool set_target(gs_device_t *device, gs_texture_t *tex, int side, gs_zstencil_t *zs, enum gs_color_space space)
+static bool gl_set_target(gs_device_t *device, gs_texture_t *tex, int side, gs_zstencil_t *zs,
+			  enum gs_color_space space)
 {
 	device->cur_color_space = space;
 
@@ -808,23 +809,23 @@ static bool set_target(gs_device_t *device, gs_texture_t *tex, int side, gs_zste
 	device->cur_zstencil_buffer = zs;
 
 	if (!tex)
-		return set_current_fbo(device, NULL);
+		return gl_set_current_fbo(device, NULL);
 
-	struct fbo_info *const fbo = get_fbo_by_tex(tex);
+	struct fbo_info *const fbo = gl_get_fbo_by_tex(tex);
 	if (!fbo)
 		return false;
 
-	set_current_fbo(device, fbo);
+	gl_set_current_fbo(device, fbo);
 
-	if (!attach_rendertarget(fbo, tex, side))
+	if (!gl_attach_rendertarget(fbo, tex, side))
 		return false;
-	if (!attach_zstencil(fbo, zs))
+	if (!gl_attach_zstencil(fbo, zs))
 		return false;
 
 	return true;
 }
 
-void device_set_render_target(gs_device_t *device, gs_texture_t *tex, gs_zstencil_t *zstencil)
+void device_set_render_target_gl(gs_device_t *device, gs_texture_t *tex, gs_zstencil_t *zstencil)
 {
 	if (tex) {
 		if (tex->type != GS_TEXTURE_2D) {
@@ -838,7 +839,7 @@ void device_set_render_target(gs_device_t *device, gs_texture_t *tex, gs_zstenci
 		}
 	}
 
-	if (!set_target(device, tex, 0, zstencil, GS_CS_SRGB))
+	if (!gl_set_target(device, tex, 0, zstencil, GS_CS_SRGB))
 		goto fail;
 
 	return;
@@ -847,7 +848,7 @@ fail:
 	blog(LOG_ERROR, "device_set_render_target (GL) failed");
 }
 
-void device_set_render_target_with_color_space(gs_device_t *device, gs_texture_t *tex, gs_zstencil_t *zstencil,
+void device_set_render_target_with_color_space_gl(gs_device_t *device, gs_texture_t *tex, gs_zstencil_t *zstencil,
 					       enum gs_color_space space)
 {
 	if (tex) {
@@ -862,7 +863,7 @@ void device_set_render_target_with_color_space(gs_device_t *device, gs_texture_t
 		}
 	}
 
-	if (!set_target(device, tex, 0, zstencil, space))
+	if (!gl_set_target(device, tex, 0, zstencil, space))
 		goto fail;
 
 	return;
@@ -885,7 +886,7 @@ void device_set_cube_render_target(gs_device_t *device, gs_texture_t *cubetex, i
 		}
 	}
 
-	if (!set_target(device, cubetex, side, zstencil, GS_CS_SRGB))
+	if (!gl_set_target(device, cubetex, side, zstencil, GS_CS_SRGB))
 		goto fail;
 
 	return;
@@ -894,7 +895,7 @@ fail:
 	blog(LOG_ERROR, "device_set_cube_render_target (GL) failed");
 }
 
-void device_enable_framebuffer_srgb(gs_device_t *device, bool enable)
+void device_enable_framebuffer_srgb_gl(gs_device_t *device, bool enable)
 {
 	UNUSED_PARAMETER(device);
 
@@ -904,7 +905,7 @@ void device_enable_framebuffer_srgb(gs_device_t *device, bool enable)
 		gl_disable(GL_FRAMEBUFFER_SRGB);
 }
 
-bool device_framebuffer_srgb_enabled(gs_device_t *device)
+bool device_framebuffer_srgb_enabled_gl(gs_device_t *device)
 {
 	UNUSED_PARAMETER(device);
 
@@ -913,7 +914,7 @@ bool device_framebuffer_srgb_enabled(gs_device_t *device)
 	return enabled == GL_TRUE;
 }
 
-void device_copy_texture_region(gs_device_t *device, gs_texture_t *dst, uint32_t dst_x, uint32_t dst_y,
+void device_copy_texture_region_gl(gs_device_t *device, gs_texture_t *dst, uint32_t dst_x, uint32_t dst_y,
 				gs_texture_t *src, uint32_t src_x, uint32_t src_y, uint32_t src_w, uint32_t src_h)
 {
 	struct gs_texture_2d *src2d = (struct gs_texture_2d *)src;
@@ -958,23 +959,23 @@ fail:
 	blog(LOG_ERROR, "device_copy_texture (GL) failed");
 }
 
-void device_copy_texture(gs_device_t *device, gs_texture_t *dst, gs_texture_t *src)
+void device_copy_texture_gl(gs_device_t *device, gs_texture_t *dst, gs_texture_t *src)
 {
-	device_copy_texture_region(device, dst, 0, 0, src, 0, 0, 0, 0);
+	device_copy_texture_region_gl(device, dst, 0, 0, src, 0, 0, 0, 0);
 }
 
-void device_begin_frame(gs_device_t *device)
+void device_begin_frame_gl(gs_device_t *device)
 {
 	/* does nothing */
 	UNUSED_PARAMETER(device);
 }
 
-void device_begin_scene(gs_device_t *device)
+void device_begin_scene_gl(gs_device_t *device)
 {
-	clear_textures(device);
+	clear_textures_gl(device);
 }
 
-static inline bool can_render(const gs_device_t *device, uint32_t num_verts)
+static inline bool can_render_gl(const gs_device_t *device, uint32_t num_verts)
 {
 	if (!device->cur_vertex_shader) {
 		blog(LOG_ERROR, "No vertex shader specified");
@@ -999,7 +1000,7 @@ static inline bool can_render(const gs_device_t *device, uint32_t num_verts)
 	return true;
 }
 
-static void update_viewproj_matrix(struct gs_device *device)
+static void update_viewproj_matrix_gl(struct gs_device *device)
 {
 	struct gs_shader *vs = device->cur_vertex_shader;
 	struct matrix4 cur_proj;
@@ -1027,7 +1028,7 @@ static void update_viewproj_matrix(struct gs_device *device)
 		gs_shader_set_matrix4(vs->viewproj, &device->cur_viewproj);
 }
 
-static inline struct gs_program *find_program(const struct gs_device *device)
+static inline struct gs_program *find_program_gl(const struct gs_device *device)
 {
 	struct gs_program *program = device->first_program;
 
@@ -1042,9 +1043,9 @@ static inline struct gs_program *find_program(const struct gs_device *device)
 	return NULL;
 }
 
-static inline struct gs_program *get_shader_program(struct gs_device *device)
+static inline struct gs_program *get_shader_program_gl(struct gs_device *device)
 {
-	struct gs_program *program = find_program(device);
+	struct gs_program *program = find_program_gl(device);
 
 	if (!program)
 		program = gs_program_create(device);
@@ -1052,7 +1053,7 @@ static inline struct gs_program *get_shader_program(struct gs_device *device)
 	return program;
 }
 
-void device_draw(gs_device_t *device, enum gs_draw_mode draw_mode, uint32_t start_vert, uint32_t num_verts)
+void device_draw_gl(gs_device_t *device, enum gs_draw_mode draw_mode, uint32_t start_vert, uint32_t num_verts)
 {
 	struct gs_vertex_buffer *vb = device->cur_vertex_buffer;
 	struct gs_index_buffer *ib = device->cur_index_buffer;
@@ -1060,7 +1061,7 @@ void device_draw(gs_device_t *device, enum gs_draw_mode draw_mode, uint32_t star
 	gs_effect_t *effect = gs_get_effect();
 	struct gs_program *program;
 
-	if (!can_render(device, num_verts))
+	if (!can_render_gl(device, num_verts))
 		goto fail;
 
 	if (effect)
@@ -1071,7 +1072,7 @@ void device_draw(gs_device_t *device, enum gs_draw_mode draw_mode, uint32_t star
 		goto fail;
 
 	if (vb)
-		load_vb_buffers(program, vb, ib);
+		load_vb_buffers_gl(program, vb, ib);
 	else
 		gl_bind_vertex_array(device->empty_vao);
 
@@ -1088,9 +1089,9 @@ void device_draw(gs_device_t *device, enum gs_draw_mode draw_mode, uint32_t star
 			goto fail;
 	}
 
-	update_viewproj_matrix(device);
+	update_viewproj_matrix_gl(device);
 
-	program_update_params(program);
+	program_update_params_gl(program);
 
 	if (ib) {
 		if (num_verts == 0)
@@ -1113,13 +1114,13 @@ fail:
 	blog(LOG_ERROR, "device_draw (GL) failed");
 }
 
-void device_end_scene(gs_device_t *device)
+void device_end_scene_gl(gs_device_t *device)
 {
 	/* does nothing */
 	UNUSED_PARAMETER(device);
 }
 
-void device_clear(gs_device_t *device, uint32_t clear_flags, const struct vec4 *color, float depth, uint8_t stencil)
+void device_clear_gl(gs_device_t *device, uint32_t clear_flags, const struct vec4 *color, float depth, uint8_t stencil)
 {
 	GLbitfield gl_flags = 0;
 
@@ -1145,7 +1146,7 @@ void device_clear(gs_device_t *device, uint32_t clear_flags, const struct vec4 *
 	UNUSED_PARAMETER(device);
 }
 
-void device_flush(gs_device_t *device)
+void device_flush_gl(gs_device_t *device)
 {
 #ifdef __APPLE__
 	if (!device->cur_swap)
@@ -1157,7 +1158,7 @@ void device_flush(gs_device_t *device)
 #endif
 }
 
-void device_set_cull_mode(gs_device_t *device, enum gs_cull_mode mode)
+void device_set_cull_mode_gl(gs_device_t *device, enum gs_cull_mode mode)
 {
 	if (device->cur_cull_mode == mode)
 		return;
@@ -1175,12 +1176,12 @@ void device_set_cull_mode(gs_device_t *device, enum gs_cull_mode mode)
 		gl_disable(GL_CULL_FACE);
 }
 
-enum gs_cull_mode device_get_cull_mode(const gs_device_t *device)
+enum gs_cull_mode device_get_cull_mode_gl(const gs_device_t *device)
 {
 	return device->cur_cull_mode;
 }
 
-void device_enable_blending(gs_device_t *device, bool enable)
+void device_enable_blending_gl(gs_device_t *device, bool enable)
 {
 	if (enable)
 		gl_enable(GL_BLEND);
@@ -1190,7 +1191,7 @@ void device_enable_blending(gs_device_t *device, bool enable)
 	UNUSED_PARAMETER(device);
 }
 
-void device_enable_depth_test(gs_device_t *device, bool enable)
+void device_enable_depth_test_gl(gs_device_t *device, bool enable)
 {
 	if (enable)
 		gl_enable(GL_DEPTH_TEST);
@@ -1200,7 +1201,7 @@ void device_enable_depth_test(gs_device_t *device, bool enable)
 	UNUSED_PARAMETER(device);
 }
 
-void device_enable_stencil_test(gs_device_t *device, bool enable)
+void device_enable_stencil_test_gl(gs_device_t *device, bool enable)
 {
 	if (enable)
 		gl_enable(GL_STENCIL_TEST);
@@ -1210,7 +1211,7 @@ void device_enable_stencil_test(gs_device_t *device, bool enable)
 	UNUSED_PARAMETER(device);
 }
 
-void device_enable_stencil_write(gs_device_t *device, bool enable)
+void device_enable_stencil_write_gl(gs_device_t *device, bool enable)
 {
 	if (enable)
 		glStencilMask(0xFFFFFFFF);
@@ -1220,14 +1221,14 @@ void device_enable_stencil_write(gs_device_t *device, bool enable)
 	UNUSED_PARAMETER(device);
 }
 
-void device_enable_color(gs_device_t *device, bool red, bool green, bool blue, bool alpha)
+void device_enable_color_gl(gs_device_t *device, bool red, bool green, bool blue, bool alpha)
 {
 	glColorMask(red, green, blue, alpha);
 
 	UNUSED_PARAMETER(device);
 }
 
-void device_blend_function(gs_device_t *device, enum gs_blend_type src, enum gs_blend_type dest)
+void device_blend_function_gl(gs_device_t *device, enum gs_blend_type src, enum gs_blend_type dest)
 {
 	GLenum gl_src = convert_gs_blend_type(src);
 	GLenum gl_dst = convert_gs_blend_type(dest);
@@ -1239,7 +1240,7 @@ void device_blend_function(gs_device_t *device, enum gs_blend_type src, enum gs_
 	UNUSED_PARAMETER(device);
 }
 
-void device_blend_function_separate(gs_device_t *device, enum gs_blend_type src_c, enum gs_blend_type dest_c,
+void device_blend_function_separate_gl(gs_device_t *device, enum gs_blend_type src_c, enum gs_blend_type dest_c,
 				    enum gs_blend_type src_a, enum gs_blend_type dest_a)
 {
 	GLenum gl_src_c = convert_gs_blend_type(src_c);
@@ -1254,7 +1255,7 @@ void device_blend_function_separate(gs_device_t *device, enum gs_blend_type src_
 	UNUSED_PARAMETER(device);
 }
 
-void device_blend_op(gs_device_t *device, enum gs_blend_op_type op)
+void device_blend_op_gl(gs_device_t *device, enum gs_blend_op_type op)
 {
 	GLenum gl_blend_op = convert_gs_blend_op_type(op);
 
@@ -1265,7 +1266,7 @@ void device_blend_op(gs_device_t *device, enum gs_blend_op_type op)
 	UNUSED_PARAMETER(device);
 }
 
-void device_depth_function(gs_device_t *device, enum gs_depth_test test)
+void device_depth_function_gl(gs_device_t *device, enum gs_depth_test test)
 {
 	GLenum gl_test = convert_gs_depth_test(test);
 
@@ -1276,7 +1277,7 @@ void device_depth_function(gs_device_t *device, enum gs_depth_test test)
 	UNUSED_PARAMETER(device);
 }
 
-void device_stencil_function(gs_device_t *device, enum gs_stencil_side side, enum gs_depth_test test)
+void device_stencil_function_gl(gs_device_t *device, enum gs_stencil_side side, enum gs_depth_test test)
 {
 	GLenum gl_side = convert_gs_stencil_side(side);
 	GLenum gl_test = convert_gs_depth_test(test);
@@ -1288,7 +1289,7 @@ void device_stencil_function(gs_device_t *device, enum gs_stencil_side side, enu
 	UNUSED_PARAMETER(device);
 }
 
-void device_stencil_op(gs_device_t *device, enum gs_stencil_side side, enum gs_stencil_op_type fail,
+void device_stencil_op_gl(gs_device_t *device, enum gs_stencil_side side, enum gs_stencil_op_type fail,
 		       enum gs_stencil_op_type zfail, enum gs_stencil_op_type zpass)
 {
 	GLenum gl_side = convert_gs_stencil_side(side);
@@ -1303,7 +1304,7 @@ void device_stencil_op(gs_device_t *device, enum gs_stencil_side side, enum gs_s
 	UNUSED_PARAMETER(device);
 }
 
-static inline uint32_t get_target_height(const struct gs_device *device)
+static inline uint32_t get_target_height_gl(const struct gs_device *device)
 {
 	if (!device->cur_render_target)
 		return device_get_height(device);
@@ -1314,7 +1315,7 @@ static inline uint32_t get_target_height(const struct gs_device *device)
 		return gs_cubetexture_get_size(device->cur_render_target);
 }
 
-void device_set_viewport(gs_device_t *device, int x, int y, int width, int height)
+void device_set_viewport_gl(gs_device_t *device, int x, int y, int width, int height)
 {
 	uint32_t base_height = 0;
 
@@ -1340,12 +1341,12 @@ void device_set_viewport(gs_device_t *device, int x, int y, int width, int heigh
 	device->cur_viewport.cy = height;
 }
 
-void device_get_viewport(const gs_device_t *device, struct gs_rect *rect)
+void device_get_viewport_gl(const gs_device_t *device, struct gs_rect *rect)
 {
 	*rect = device->cur_viewport;
 }
 
-void device_set_scissor_rect(gs_device_t *device, const struct gs_rect *rect)
+void device_set_scissor_rect_gl(gs_device_t *device, const struct gs_rect *rect)
 {
 	UNUSED_PARAMETER(device);
 
@@ -1361,7 +1362,7 @@ void device_set_scissor_rect(gs_device_t *device, const struct gs_rect *rect)
 	blog(LOG_ERROR, "device_set_scissor_rect (GL) failed");
 }
 
-void device_ortho(gs_device_t *device, float left, float right, float top, float bottom, float near, float far)
+void device_ortho_gl(gs_device_t *device, float left, float right, float top, float bottom, float near, float far)
 {
 	struct matrix4 *dst = &device->cur_proj;
 
@@ -1386,7 +1387,7 @@ void device_ortho(gs_device_t *device, float left, float right, float top, float
 	dst->t.w = 1.0f;
 }
 
-void device_frustum(gs_device_t *device, float left, float right, float top, float bottom, float near, float far)
+void device_frustum_gl(gs_device_t *device, float left, float right, float top, float bottom, float near, float far)
 {
 	struct matrix4 *dst = &device->cur_proj;
 
@@ -1412,12 +1413,12 @@ void device_frustum(gs_device_t *device, float left, float right, float top, flo
 	dst->z.w = -1.0f;
 }
 
-void device_projection_push(gs_device_t *device)
+void device_projection_push_gl(gs_device_t *device)
 {
 	da_push_back(device->proj_stack, &device->cur_proj);
 }
 
-void device_projection_pop(gs_device_t *device)
+void device_projection_pop_gl(gs_device_t *device)
 {
 	struct matrix4 *end;
 	if (!device->proj_stack.num)
@@ -1428,7 +1429,7 @@ void device_projection_pop(gs_device_t *device)
 	da_pop_back(device->proj_stack);
 }
 
-void device_debug_marker_begin(gs_device_t *device, const char *markername, const float color[4])
+void device_debug_marker_begin_gl(gs_device_t *device, const char *markername, const float color[4])
 {
 	UNUSED_PARAMETER(device);
 	UNUSED_PARAMETER(color);
@@ -1436,14 +1437,14 @@ void device_debug_marker_begin(gs_device_t *device, const char *markername, cons
 	glPushDebugGroupKHR(GL_DEBUG_SOURCE_APPLICATION, 0, -1, markername);
 }
 
-void device_debug_marker_end(gs_device_t *device)
+void device_debug_marker_end_gl(gs_device_t *device)
 {
 	UNUSED_PARAMETER(device);
 
 	glPopDebugGroupKHR();
 }
 
-void gs_swapchain_destroy(gs_swapchain_t *swapchain)
+void gs_swapchain_destroy_gl(gs_swapchain_t *swapchain)
 {
 	if (!swapchain)
 		return;
@@ -1457,7 +1458,7 @@ void gs_swapchain_destroy(gs_swapchain_t *swapchain)
 	bfree(swapchain);
 }
 
-bool device_nv12_available(gs_device_t *device)
+bool device_nv12_available_gl(gs_device_t *device)
 {
 	UNUSED_PARAMETER(device);
 #ifdef _WIN32
@@ -1467,7 +1468,7 @@ bool device_nv12_available(gs_device_t *device)
 #endif
 }
 
-bool device_p010_available(gs_device_t *device)
+bool device_p010_available_gl(gs_device_t *device)
 {
 	UNUSED_PARAMETER(device);
 #ifdef _WIN32
@@ -1477,35 +1478,35 @@ bool device_p010_available(gs_device_t *device)
 #endif
 }
 
-uint32_t gs_voltexture_get_width(const gs_texture_t *voltex)
+uint32_t gs_voltexture_get_width_gl(const gs_texture_t *voltex)
 {
 	/* TODO */
 	UNUSED_PARAMETER(voltex);
 	return 0;
 }
 
-uint32_t gs_voltexture_get_height(const gs_texture_t *voltex)
+uint32_t gs_voltexture_get_height_gl(const gs_texture_t *voltex)
 {
 	/* TODO */
 	UNUSED_PARAMETER(voltex);
 	return 0;
 }
 
-uint32_t gs_voltexture_get_depth(const gs_texture_t *voltex)
+uint32_t gs_voltexture_get_depth_gl(const gs_texture_t *voltex)
 {
 	/* TODO */
 	UNUSED_PARAMETER(voltex);
 	return 0;
 }
 
-enum gs_color_format gs_voltexture_get_color_format(const gs_texture_t *voltex)
+enum gs_color_format gs_voltexture_get_color_format_gl(const gs_texture_t *voltex)
 {
 	/* TODO */
 	UNUSED_PARAMETER(voltex);
 	return GS_UNKNOWN;
 }
 
-void gs_samplerstate_destroy(gs_samplerstate_t *samplerstate)
+void gs_samplerstate_destroy_gl(gs_samplerstate_t *samplerstate)
 {
 	if (!samplerstate)
 		return;
@@ -1515,10 +1516,10 @@ void gs_samplerstate_destroy(gs_samplerstate_t *samplerstate)
 			if (samplerstate->device->cur_samplers[i] == samplerstate)
 				samplerstate->device->cur_samplers[i] = NULL;
 
-	samplerstate_release(samplerstate);
+	samplerstate_release_gl(samplerstate);
 }
 
-void gs_timer_destroy(gs_timer_t *timer)
+void gs_timer_destroy_gl(gs_timer_t *timer)
 {
 	if (!timer)
 		return;
@@ -1529,19 +1530,19 @@ void gs_timer_destroy(gs_timer_t *timer)
 	bfree(timer);
 }
 
-void gs_timer_begin(gs_timer_t *timer)
+void gs_timer_begin_gl(gs_timer_t *timer)
 {
 	glQueryCounter(timer->queries[0], GL_TIMESTAMP);
 	gl_success("glQueryCounter");
 }
 
-void gs_timer_end(gs_timer_t *timer)
+void gs_timer_end_gl(gs_timer_t *timer)
 {
 	glQueryCounter(timer->queries[1], GL_TIMESTAMP);
 	gl_success("glQueryCounter");
 }
 
-bool gs_timer_get_data(gs_timer_t *timer, uint64_t *ticks)
+bool gs_timer_get_data_gl(gs_timer_t *timer, uint64_t *ticks)
 {
 	GLint available = 0;
 	glGetQueryObjectiv(timer->queries[1], GL_QUERY_RESULT_AVAILABLE, &available);
@@ -1556,22 +1557,22 @@ bool gs_timer_get_data(gs_timer_t *timer, uint64_t *ticks)
 	return true;
 }
 
-void gs_timer_range_destroy(gs_timer_range_t *range)
+void gs_timer_range_destroy_gl(gs_timer_range_t *range)
 {
 	UNUSED_PARAMETER(range);
 }
 
-void gs_timer_range_begin(gs_timer_range_t *range)
+void gs_timer_range_begin_gl(gs_timer_range_t *range)
 {
 	UNUSED_PARAMETER(range);
 }
 
-void gs_timer_range_end(gs_timer_range_t *range)
+void gs_timer_range_end_gl(gs_timer_range_t *range)
 {
 	UNUSED_PARAMETER(range);
 }
 
-bool gs_timer_range_get_data(gs_timer_range_t *range, bool *disjoint, uint64_t *frequency)
+bool gs_timer_range_get_data_gl(gs_timer_range_t *range, bool *disjoint, uint64_t *frequency)
 {
 	UNUSED_PARAMETER(range);
 

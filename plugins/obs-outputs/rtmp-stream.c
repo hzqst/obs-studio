@@ -26,6 +26,8 @@
 #include <util/windows/win-version.h>
 #endif
 
+OBS_DECLARE_MODULE(obs_outputs);
+
 #ifndef SEC_TO_NSEC
 #define SEC_TO_NSEC 1000000000ULL
 #endif
@@ -47,7 +49,7 @@
 static const char *rtmp_stream_getname(void *unused)
 {
 	UNUSED_PARAMETER(unused);
-	return obs_module_text("RTMPStream");
+	return obs_module_text(obs_outputs, "RTMPStream");
 }
 
 static void log_rtmp(int level, const char *format, va_list args)
@@ -503,31 +505,31 @@ static void set_output_error(struct rtmp_stream *stream)
 #ifdef _WIN32
 	switch (stream->rtmp.last_error_code) {
 	case WSAETIMEDOUT:
-		msg = obs_module_text("ConnectionTimedOut");
+		msg = obs_module_text(obs_outputs, "ConnectionTimedOut");
 		break;
 	case WSAEACCES:
-		msg = obs_module_text("PermissionDenied");
+		msg = obs_module_text(obs_outputs, "PermissionDenied");
 		break;
 	case WSAECONNABORTED:
-		msg = obs_module_text("ConnectionAborted");
+		msg = obs_module_text(obs_outputs, "ConnectionAborted");
 		break;
 	case WSAECONNRESET:
-		msg = obs_module_text("ConnectionReset");
+		msg = obs_module_text(obs_outputs, "ConnectionReset");
 		break;
 	case WSAHOST_NOT_FOUND:
-		msg = obs_module_text("HostNotFound");
+		msg = obs_module_text(obs_outputs, "HostNotFound");
 		break;
 	case WSANO_DATA:
-		msg = obs_module_text("NoData");
+		msg = obs_module_text(obs_outputs, "NoData");
 		break;
 	case WSAEADDRNOTAVAIL:
-		msg = obs_module_text("AddressNotAvailable");
+		msg = obs_module_text(obs_outputs, "AddressNotAvailable");
 		break;
 	case WSAEINVAL:
-		msg = obs_module_text("InvalidParameter");
+		msg = obs_module_text(obs_outputs, "InvalidParameter");
 		break;
 	case WSAEHOSTUNREACH:
-		msg = obs_module_text("NoRoute");
+		msg = obs_module_text(obs_outputs, "NoRoute");
 		break;
 	}
 #else
@@ -566,7 +568,7 @@ static void set_output_error(struct rtmp_stream *stream)
 	if (!msg) {
 		switch (stream->rtmp.last_error_code) {
 		case -0x2700:
-			msg = obs_module_text("SSLCertVerifyFailed");
+			msg = obs_module_text(obs_outputs, "SSLCertVerifyFailed");
 			break;
 		case -0x7680:
 			msg = "Failed to load root certificates for a secure TLS connection."
@@ -1731,21 +1733,23 @@ static obs_properties_t *rtmp_stream_properties(void *unused)
 	struct netif_saddr_data addrs = {0};
 	obs_property_t *p;
 
-	p = obs_properties_add_int(props, OPT_DROP_THRESHOLD, obs_module_text("RTMPStream.DropThreshold"), 200, 10000,
+	p = obs_properties_add_int(props, OPT_DROP_THRESHOLD, obs_module_text(obs_outputs, "RTMPStream.DropThreshold"),
+				   200, 10000,
 				   100);
 	obs_property_int_set_suffix(p, " ms");
 
-	p = obs_properties_add_list(props, OPT_IP_FAMILY, obs_module_text("IPFamily"), OBS_COMBO_TYPE_LIST,
+	p = obs_properties_add_list(props, OPT_IP_FAMILY, obs_module_text(obs_outputs, "IPFamily"), OBS_COMBO_TYPE_LIST,
 				    OBS_COMBO_FORMAT_STRING);
 
-	obs_property_list_add_string(p, obs_module_text("IPFamily.Both"), "IPv4+IPv6");
-	obs_property_list_add_string(p, obs_module_text("IPFamily.V4Only"), "IPv4");
-	obs_property_list_add_string(p, obs_module_text("IPFamily.V6Only"), "IPv6");
+	obs_property_list_add_string(p, obs_module_text(obs_outputs, "IPFamily.Both"), "IPv4+IPv6");
+	obs_property_list_add_string(p, obs_module_text(obs_outputs, "IPFamily.V4Only"), "IPv4");
+	obs_property_list_add_string(p, obs_module_text(obs_outputs, "IPFamily.V6Only"), "IPv6");
 
-	p = obs_properties_add_list(props, OPT_BIND_IP, obs_module_text("RTMPStream.BindIP"), OBS_COMBO_TYPE_LIST,
+	p = obs_properties_add_list(props, OPT_BIND_IP, obs_module_text(obs_outputs, "RTMPStream.BindIP"),
+				    OBS_COMBO_TYPE_LIST,
 				    OBS_COMBO_FORMAT_STRING);
 
-	obs_property_list_add_string(p, obs_module_text("Default"), "default");
+	obs_property_list_add_string(p, obs_module_text(obs_outputs, "Default"), "default");
 
 	netif_get_addrs(&addrs);
 	for (size_t i = 0; i < addrs.addrs.num; i++) {
@@ -1755,8 +1759,10 @@ static obs_properties_t *rtmp_stream_properties(void *unused)
 	netif_saddr_data_free(&addrs);
 
 #ifdef _WIN32
-	obs_properties_add_bool(props, OPT_NEWSOCKETLOOP_ENABLED, obs_module_text("RTMPStream.NewSocketLoop"));
-	obs_properties_add_bool(props, OPT_LOWLATENCY_ENABLED, obs_module_text("RTMPStream.LowLatencyMode"));
+	obs_properties_add_bool(props, OPT_NEWSOCKETLOOP_ENABLED,
+				obs_module_text(obs_outputs, "RTMPStream.NewSocketLoop"));
+	obs_properties_add_bool(props, OPT_LOWLATENCY_ENABLED,
+				obs_module_text(obs_outputs, "RTMPStream.LowLatencyMode"));
 #endif
 
 	return props;

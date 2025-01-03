@@ -17,7 +17,7 @@
 
 #include "gl-subsystem.h"
 
-static inline bool init_ib(struct gs_index_buffer *ib)
+static inline bool gl_init_ib(struct gs_index_buffer *ib)
 {
 	GLenum usage = ib->dynamic ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW;
 	bool success;
@@ -32,7 +32,7 @@ static inline bool init_ib(struct gs_index_buffer *ib)
 	return success;
 }
 
-gs_indexbuffer_t *device_indexbuffer_create(gs_device_t *device, enum gs_index_type type, void *indices, size_t num,
+gs_indexbuffer_t *device_indexbuffer_create_gl(gs_device_t *device, enum gs_index_type type, void *indices, size_t num,
 					    uint32_t flags)
 {
 	struct gs_index_buffer *ib = bzalloc(sizeof(struct gs_index_buffer));
@@ -47,16 +47,16 @@ gs_indexbuffer_t *device_indexbuffer_create(gs_device_t *device, enum gs_index_t
 	ib->type = type;
 	ib->gl_type = type == GS_UNSIGNED_LONG ? GL_UNSIGNED_INT : GL_UNSIGNED_SHORT;
 
-	if (!init_ib(ib)) {
+	if (!gl_init_ib(ib)) {
 		blog(LOG_ERROR, "device_indexbuffer_create (GL) failed");
-		gs_indexbuffer_destroy(ib);
+		gs_indexbuffer_destroy_gl(ib);
 		return NULL;
 	}
 
 	return ib;
 }
 
-void gs_indexbuffer_destroy(gs_indexbuffer_t *ib)
+void gs_indexbuffer_destroy_gl(gs_indexbuffer_t *ib)
 {
 	if (ib) {
 		if (ib->buffer)
@@ -67,14 +67,14 @@ void gs_indexbuffer_destroy(gs_indexbuffer_t *ib)
 	}
 }
 
-static inline void gs_indexbuffer_flush_internal(gs_indexbuffer_t *ib, const void *data)
+static inline void gs_indexbuffer_flush_internal_gl(gs_indexbuffer_t *ib, const void *data)
 {
 	if (!ib->dynamic) {
 		blog(LOG_ERROR, "Index buffer is not dynamic");
 		goto fail;
 	}
 
-	if (!update_buffer(GL_ELEMENT_ARRAY_BUFFER, ib->buffer, data, ib->size))
+	if (!gl_update_buffer(GL_ELEMENT_ARRAY_BUFFER, ib->buffer, data, ib->size))
 		goto fail;
 
 	return;
@@ -83,32 +83,32 @@ fail:
 	blog(LOG_ERROR, "gs_indexbuffer_flush (GL) failed");
 }
 
-void gs_indexbuffer_flush(gs_indexbuffer_t *ib)
+void gs_indexbuffer_flush_gl(gs_indexbuffer_t *ib)
 {
-	gs_indexbuffer_flush_internal(ib, ib->data);
+	gs_indexbuffer_flush_internal_gl(ib, ib->data);
 }
 
-void gs_indexbuffer_flush_direct(gs_indexbuffer_t *ib, const void *data)
+void gs_indexbuffer_flush_direct_gl(gs_indexbuffer_t *ib, const void *data)
 {
-	gs_indexbuffer_flush_internal(ib, data);
+	gs_indexbuffer_flush_internal_gl(ib, data);
 }
 
-void *gs_indexbuffer_get_data(const gs_indexbuffer_t *ib)
+void *gs_indexbuffer_get_data_gl(const gs_indexbuffer_t *ib)
 {
 	return ib->data;
 }
 
-size_t gs_indexbuffer_get_num_indices(const gs_indexbuffer_t *ib)
+size_t gs_indexbuffer_get_num_indices_gl(const gs_indexbuffer_t *ib)
 {
 	return ib->num;
 }
 
-enum gs_index_type gs_indexbuffer_get_type(const gs_indexbuffer_t *ib)
+enum gs_index_type gs_indexbuffer_get_type_gl(const gs_indexbuffer_t *ib)
 {
 	return ib->type;
 }
 
-void device_load_indexbuffer(gs_device_t *device, gs_indexbuffer_t *ib)
+void device_load_indexbuffer_gl(gs_device_t *device, gs_indexbuffer_t *ib)
 {
 	device->cur_index_buffer = ib;
 }

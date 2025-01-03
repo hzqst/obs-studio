@@ -5,12 +5,8 @@
 #include <mbedtls/threading.h>
 #endif
 
-OBS_DECLARE_MODULE(outputs)
-OBS_MODULE_USE_DEFAULT_LOCALE("obs-outputs", "en-US")
-MODULE_EXPORT const char *obs_module_description(void)
-{
-	return "OBS core RTMP/FLV/null outputs";
-}
+OBS_DECLARE_MODULE(obs_outputs)
+OBS_MODULE_USE_DEFAULT_LOCALE(obs_outputs, "en-US")
 
 extern struct obs_output_info rtmp_output_info;
 extern struct obs_output_info null_output_info;
@@ -48,7 +44,7 @@ int mbed_mutex_unlock(mbedtls_threading_mutex_t *m)
 }
 #endif
 
-bool obs_module_load(void)
+static bool obs_module_load(void)
 {
 #ifdef _WIN32
 	WSADATA wsad;
@@ -66,7 +62,7 @@ bool obs_module_load(void)
 	return true;
 }
 
-void obs_module_unload(void)
+static void obs_module_unload(void)
 {
 #ifdef _WIN32
 #ifdef MBEDTLS_THREADING_ALT
@@ -75,3 +71,25 @@ void obs_module_unload(void)
 	WSACleanup();
 #endif
 }
+
+static void obs_module_post_load(void)
+{
+
+}
+
+static const char *obs_module_name(void)
+{
+	return "obs-outputs";
+}
+
+static const char *obs_module_author(void)
+{
+	return "";
+}
+
+static const char *obs_module_description(void)
+{
+	return "OBS core RTMP/FLV/null outputs";
+}
+
+OBS_DEFINE_MODULE(obs_outputs)

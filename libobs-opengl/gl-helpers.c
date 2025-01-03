@@ -54,7 +54,7 @@ bool gl_init_face(GLenum target, GLenum type, uint32_t num_levels, GLenum format
 static bool gl_copy_fbo(struct gs_texture *dst, uint32_t dst_x, uint32_t dst_y, struct gs_texture *src, uint32_t src_x,
 			uint32_t src_y, uint32_t width, uint32_t height)
 {
-	struct fbo_info *fbo = get_fbo(src, width, height);
+	struct fbo_info *fbo = gl_get_fbo(src, width, height);
 	GLint last_fbo;
 	bool success = false;
 
@@ -130,7 +130,7 @@ bool gl_create_buffer(GLenum target, GLuint *buffer, GLsizeiptr size, const GLvo
 	return success;
 }
 
-bool update_buffer(GLenum target, GLuint buffer, const void *data, size_t size)
+bool gl_update_buffer(GLenum target, GLuint buffer, const void *data, size_t size)
 {
 	void *ptr;
 	bool success = true;

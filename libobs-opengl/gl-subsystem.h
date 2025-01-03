@@ -658,7 +658,7 @@ struct gs_device {
 	struct fbo_info *cur_fbo;
 };
 
-extern struct fbo_info *get_fbo(gs_texture_t *tex, uint32_t width, uint32_t height);
+extern struct fbo_info *gl_get_fbo(gs_texture_t *tex, uint32_t width, uint32_t height);
 
 extern void gl_update(gs_device_t *device);
 extern void gl_clear_context(gs_device_t *device);
@@ -673,3 +673,8 @@ extern struct gl_windowinfo *gl_windowinfo_create(const struct gs_init_data *inf
 extern void gl_windowinfo_destroy(struct gl_windowinfo *wi);
 
 extern void gl_getclientsize(const struct gs_swap_chain *swap, uint32_t *width, uint32_t *height);
+
+extern void gs_cubetexture_destroy_gl(gs_texture_t *tex);
+extern void gs_indexbuffer_destroy_gl(gs_indexbuffer_t *ib);
+extern void gs_program_destroy_gl(struct gs_program *program);
+extern void gs_texture_destroy_gl(gs_texture_t *tex);

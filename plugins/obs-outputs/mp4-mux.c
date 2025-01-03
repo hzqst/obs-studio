@@ -29,6 +29,8 @@
 
 #include <time.h>
 
+OBS_DECLARE_MODULE(obs_outputs);
+
 /*
  * (Mostly) compliant MP4 muxer for fun and profit.
  * Based on ISO/IEC 14496-12 and FFmpeg's libavformat/movenc.c ([L]GPL)
@@ -2680,7 +2682,7 @@ bool mp4_mux_add_chapter(struct mp4_mux *mux, int64_t dts_usec, const char *name
 	/* To work correctly there needs to be a chapter at PTS 0,
 	 * create that here if necessary. */
 	if (dts_usec > 0 && mux->chapter_track->packets.size == 0) {
-		mp4_mux_add_chapter(mux, 0, obs_module_text("MP4Output.StartChapter"));
+		mp4_mux_add_chapter(mux, 0, obs_module_text(obs_outputs , "MP4Output.StartChapter"));
 	}
 
 	/* Create packets that will be muxed on final flush */

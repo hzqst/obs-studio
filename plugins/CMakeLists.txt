@@ -62,7 +62,7 @@ add_obs_plugin(
 #add_obs_plugin(obs-filters)
 #add_obs_plugin(obs-libfdk)
 #add_obs_plugin(obs-nvenc PLATFORMS WINDOWS LINUX)
-add_obs_plugin(obs-outputs)
+#add_obs_plugin(obs-outputs)
 #add_obs_plugin(
 #    obs-qsv11
 #    PLATFORMS WINDOWS LINUX
@@ -82,9 +82,9 @@ add_obs_plugin(obs-outputs)
 #add_obs_plugin(obs-x264)
 #add_obs_plugin(oss-audio PLATFORMS FREEBSD OPENBSD)
 #add_obs_plugin(rtmp-services)
-add_obs_plugin(sndio PLATFORMS LINUX FREEBSD OPENBSD)
+#add_obs_plugin(sndio PLATFORMS LINUX FREEBSD OPENBSD)
 add_obs_plugin(text-freetype2)
 #add_obs_plugin(vlc-video WITH_MESSAGE)
 add_obs_plugin(win-capture PLATFORMS WINDOWS)
-add_obs_plugin(win-dshow PLATFORMS WINDOWS)
-add_obs_plugin(win-wasapi PLATFORMS WINDOWS)
+#add_obs_plugin(win-dshow PLATFORMS WINDOWS)
+#add_obs_plugin(win-wasapi PLATFORMS WINDOWS)

@@ -27,6 +27,8 @@
 
 #include <opts-parser.h>
 
+OBS_DECLARE_MODULE(obs_outputs);
+
 #define do_log(level, format, ...) \
 	blog(level, "[mp4 output: '%s'] " format, obs_output_get_name(out->output), ##__VA_ARGS__)
 
@@ -133,7 +135,7 @@ static inline void ts_offset_update(struct mp4_output *out, struct encoder_packe
 static const char *mp4_output_name(void *unused)
 {
 	UNUSED_PARAMETER(unused);
-	return obs_module_text("MP4Output");
+	return obs_module_text(obs_outputs, "MP4Output");
 }
 
 static void mp4_output_destory(void *data)
@@ -158,7 +160,7 @@ static void mp4_add_chapter_proc(void *data, calldata_t *cd)
 
 	if (name.len == 0) {
 		/* Generate name if none provided. */
-		dstr_catf(&name, "%s %zu", obs_module_text("MP4Output.UnnamedChapter"), out->chapters.num + 1);
+		dstr_catf(&name, "%s %zu", obs_module_text(obs_outputs, "MP4Output.UnnamedChapter"), out->chapters.num + 1);
 	}
 
 	int64_t totalRecordSeconds = out->last_dts_usec / 1000 / 1000;
@@ -569,7 +571,7 @@ static obs_properties_t *mp4_output_properties(void *unused)
 
 	obs_properties_t *props = obs_properties_create();
 
-	obs_properties_add_text(props, "path", obs_module_text("MP4Output.FilePath"), OBS_TEXT_DEFAULT);
+	obs_properties_add_text(props, "path", obs_module_text(obs_outputs, "MP4Output.FilePath"), OBS_TEXT_DEFAULT);
 	obs_properties_add_text(props, "muxer_settings", "muxer_settings", OBS_TEXT_DEFAULT);
 	return props;
 }

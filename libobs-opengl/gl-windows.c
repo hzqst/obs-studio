@@ -521,7 +521,7 @@ void gl_windowinfo_destroy(struct gl_windowinfo *wi)
 	}
 }
 
-void device_enter_context(gs_device_t *device)
+void device_enter_context_gl(gs_device_t *device)
 {
 	HDC hdc = device->plat->window.hdc;
 	if (device->cur_swap)
@@ -531,18 +531,18 @@ void device_enter_context(gs_device_t *device)
 		blog(LOG_ERROR, "device_enter_context (GL) failed");
 }
 
-void device_leave_context(gs_device_t *device)
+void device_leave_context_gl(gs_device_t *device)
 {
 	UNUSED_PARAMETER(device);
 	wglMakeCurrent(NULL, NULL);
 }
 
-void *device_get_device_obj(gs_device_t *device)
+void *device_get_device_obj_gl(gs_device_t *device)
 {
 	return device->plat->hrc;
 }
 
-void device_load_swapchain(gs_device_t *device, gs_swapchain_t *swap)
+void device_load_swapchain_gl(gs_device_t *device, gs_swapchain_t *swap)
 {
 	HDC hdc = device->plat->window.hdc;
 	if (device->cur_swap == swap)
@@ -559,13 +559,13 @@ void device_load_swapchain(gs_device_t *device, gs_swapchain_t *swap)
 	}
 }
 
-bool device_is_present_ready(gs_device_t *device)
+bool device_is_present_ready_gl(gs_device_t *device)
 {
 	UNUSED_PARAMETER(device);
 	return true;
 }
 
-void device_present(gs_device_t *device)
+void device_present_gl(gs_device_t *device)
 {
 	if (!SwapBuffers(device->cur_swap->wi->hdc)) {
 		blog(LOG_ERROR,
@@ -589,17 +589,17 @@ extern void gl_getclientsize(const struct gs_swap_chain *swap, uint32_t *width, 
 	}
 }
 
-EXPORT bool device_is_monitor_hdr(gs_device_t *device, void *monitor)
+EXPORT bool device_is_monitor_hdr_gl(gs_device_t *device, void *monitor)
 {
 	return false;
 }
 
-EXPORT bool device_gdi_texture_available(void)
+EXPORT bool device_gdi_texture_available_gl(void)
 {
 	return false;
 }
 
-EXPORT bool device_shared_texture_available(void)
+EXPORT bool device_shared_texture_available_gl(void)
 {
 	return false;
 }
